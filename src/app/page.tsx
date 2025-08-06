@@ -6,12 +6,12 @@ export default function HomePage() {
   return (
     <div className="space-y-8 md:space-y-16">
       {/* Hero Section */}
-      <section className="text-center space-y-6 md:space-y-8 py-8 md:py-12">
+      <section className="text-center space-y-4 md:space-y-6 py-6 md:py-8">
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-2xl md:rounded-3xl blur-2xl md:blur-3xl"></div>
-          <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-12 shadow-xl">
+          <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl md:rounded-3xl p-4 md:p-6 lg:p-8 shadow-xl">
             {/* Profile Image */}
-            <div className="flex justify-center mb-6 md:mb-8">
+            <div className="flex justify-center mb-4 md:mb-6">
               <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-full overflow-hidden ring-4 ring-purple-200 dark:ring-purple-800 shadow-lg">
                 <Image
                   src="/images/DSC_5830_edited.png"
@@ -23,13 +23,13 @@ export default function HomePage() {
               </div>
             </div>
             
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold gradient-text mb-4 md:mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold gradient-text mb-3 md:mb-4">
               Hi, I&apos;m Lionel
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl md:max-w-3xl mx-auto leading-relaxed px-4">
               Welcome to my portfolio! I&apos;m excited to showcase my skills, experience, and achievements through this collection of my best work. Throughout my career, I&apos;ve had the opportunity to work on some fantastic projects that have allowed me to grow and develop my skills further. This portfolio is a reflection of my passion for mobile application development, and I hope that it demonstrates my ability to deliver exceptional work that meets or exceeds the expectations of my clients. Please take some time to browse through my portfolio and get a better understanding of my abilities and the quality of my work.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mt-6 md:mt-8 px-4">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mt-4 md:mt-6 px-4">
               <Link href="/portfolio" className="button-primary text-center">
                 View My Work
               </Link>

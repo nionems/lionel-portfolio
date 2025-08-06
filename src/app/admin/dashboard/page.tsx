@@ -66,6 +66,10 @@ export default function AdminDashboard() {
     }
   };
 
+  const refreshProjectList = async () => {
+    await loadProjects();
+  };
+
   const loadMediaItems = async () => {
     try {
       const items = await getMediaItems();
@@ -139,6 +143,7 @@ export default function AdminDashboard() {
       
       setFormData({ title: '', description: '', file: null, projectId: '', projectName: '', selectedMediaIds: [] });
       loadMediaItems();
+      refreshProjectList(); // Refresh project list after media assignment
     } catch (error) {
       setUploadStatus({
         type: 'error',
@@ -208,7 +213,10 @@ export default function AdminDashboard() {
         {/* Tab Navigation */}
         <div className="flex space-x-1 mb-8 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
           <button
-            onClick={() => setActiveTab('media')}
+            onClick={() => {
+              setActiveTab('media');
+              refreshProjectList(); // Refresh projects when switching to media tab
+            }}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               activeTab === 'media'
                 ? 'bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 shadow-sm'
@@ -234,9 +242,18 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Upload Form */}
             <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-purple-100 dark:border-purple-800">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-                Upload Media
-              </h2>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                  Upload Media
+                </h2>
+                <button
+                  onClick={refreshProjectList}
+                  className="button-secondary text-xs py-1 px-2"
+                  title="Refresh project list"
+                >
+                  🔄 Refresh Projects
+                </button>
+              </div>
 
               {uploadStatus.type && (
                 <div className={`mb-4 p-3 rounded-lg text-sm ${
@@ -431,8 +448,9 @@ export default function AdminDashboard() {
                                       // Update the media item in Firestore
                                       await updateMediaProject(item.id!, newProjectId, selectedProject?.name || '');
                                       
-                                      // Reload media items
+                                      // Reload media items and refresh project list
                                       loadMediaItems();
+                                      refreshProjectList();
                                     } catch (error) {
                                       console.error('Error reassigning media:', error);
                                     }
