@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { uploadMedia, getMediaItems, deleteMediaItem, MediaItem } from '@/lib/mediaService';
+import { getProjects, Project } from '@/lib/projectService';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function AdminDashboard() {
@@ -22,7 +23,11 @@ export default function AdminDashboard() {
     title: '',
     description: '',
     file: null as File | null,
+    projectId: '',
+    projectName: '',
   });
+
+  const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -33,8 +38,18 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (user) {
       loadMediaItems();
+      loadProjects();
     }
   }, [user]);
+
+  const loadProjects = async () => {
+    try {
+      const projectList = await getProjects();
+      setProjects(projectList);
+    } catch (error) {
+      console.error('Error loading projects:', error);
+    }
+  };
 
   const loadMediaItems = async () => {
     try {
@@ -60,12 +75,12 @@ export default function AdminDashboard() {
     setUploadStatus({ type: null, message: '' });
 
     try {
-      await uploadMedia(formData.file, formData.title, formData.description);
+      await uploadMedia(formData.file, formData.title, formData.description, formData.projectId, formData.projectName);
       setUploadStatus({
         type: 'success',
         message: 'Media uploaded successfully!',
       });
-      setFormData({ title: '', description: '', file: null });
+      setFormData({ title: '', description: '', file: null, projectId: '', projectName: '' });
       loadMediaItems();
     } catch (error) {
       setUploadStatus({
@@ -181,6 +196,31 @@ export default function AdminDashboard() {
 
               <div>
                 <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                  Project (Optional)
+                </label>
+                <select
+                  value={formData.projectId}
+                  onChange={(e) => {
+                    const selectedProject = projects.find(p => p.id === e.target.value);
+                    setFormData(prev => ({
+                      ...prev,
+                      projectId: e.target.value,
+                      projectName: selectedProject?.name || '',
+                    }));
+                  }}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                >
+                  <option value="">No project assigned</option>
+                  {projects.map((project) => (
+                    <option key={project.id || project.name} value={project.id || project.name}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                   File (Image or Video)
                 </label>
                 <input
@@ -224,6 +264,11 @@ export default function AdminDashboard() {
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                         Type: {item.type} • {item.createdAt?.toDate?.()?.toLocaleDateString() || 'Unknown date'}
+                        {item.projectName && (
+                          <span className="ml-2 text-purple-600 dark:text-purple-400">
+                            • Project: {item.projectName}
+                          </span>
+                        )}
                       </p>
                     </div>
                     <button

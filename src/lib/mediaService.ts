@@ -11,11 +11,13 @@ export interface MediaItem {
   type: 'image' | 'video';
   url: string;
   thumbnail?: string;
+  projectId?: string; // Assign to specific project
+  projectName?: string; // Project name for display
   createdAt?: any;
   updatedAt?: any;
 }
 
-export const uploadMedia = async (file: File, title: string, description: string): Promise<MediaItem> => {
+export const uploadMedia = async (file: File, title: string, description: string, projectId?: string, projectName?: string): Promise<MediaItem> => {
   try {
     // Create a unique filename
     const timestamp = Date.now();
@@ -35,6 +37,8 @@ export const uploadMedia = async (file: File, title: string, description: string
       description,
       type,
       url: downloadURL,
+      projectId,
+      projectName,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
@@ -62,6 +66,21 @@ export const getMediaItems = async (): Promise<MediaItem[]> => {
   } catch (error) {
     console.error('Error fetching media:', error);
     throw new Error('Failed to fetch media items');
+  }
+};
+
+export const getMediaByProject = async (projectId: string): Promise<MediaItem[]> => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'media'));
+    const allMedia = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as MediaItem[];
+    
+    return allMedia.filter(media => media.projectId === projectId);
+  } catch (error) {
+    console.error('Error fetching project media:', error);
+    throw new Error('Failed to fetch project media');
   }
 };
 
