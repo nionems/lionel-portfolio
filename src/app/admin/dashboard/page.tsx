@@ -5,7 +5,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { uploadMedia, getMediaItems, deleteMediaItem, MediaItem } from '@/lib/mediaService';
+import { uploadMedia, getMediaItems, deleteMediaItem, updateMediaProject, MediaItem } from '@/lib/mediaService';
 import { getProjects, Project } from '@/lib/projectService';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import ProjectManager from '@/components/ProjectManager';
@@ -28,6 +28,7 @@ export default function AdminDashboard() {
     file: null as File | null,
     projectId: '',
     projectName: '',
+    selectedMediaId: '',
   });
 
   const [projects, setProjects] = useState<Project[]>([]);
@@ -82,23 +83,45 @@ export default function AdminDashboard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.file) return;
+    
+    // Check if we have either a file or selected existing media
+    if (!formData.file && !formData.selectedMediaId) {
+      setUploadStatus({
+        type: 'error',
+        message: 'Please select a file or choose existing media.',
+      });
+      return;
+    }
 
     setIsUploading(true);
     setUploadStatus({ type: null, message: '' });
 
     try {
-      await uploadMedia(formData.file, formData.title, formData.description, formData.projectId, formData.projectName);
-      setUploadStatus({
-        type: 'success',
-        message: 'Media uploaded successfully!',
-      });
-      setFormData({ title: '', description: '', file: null, projectId: '', projectName: '' });
+      if (formData.file) {
+        // Upload new file
+        await uploadMedia(formData.file, formData.title, formData.description, formData.projectId, formData.projectName);
+        setUploadStatus({
+          type: 'success',
+          message: 'Media uploaded successfully!',
+        });
+      } else if (formData.selectedMediaId) {
+        // Assign existing media to project
+        const selectedMedia = mediaItems.find(item => item.id === formData.selectedMediaId);
+        if (selectedMedia) {
+          await updateMediaProject(formData.selectedMediaId, formData.projectId, formData.projectName);
+          setUploadStatus({
+            type: 'success',
+            message: 'Media assigned to project successfully!',
+          });
+        }
+      }
+      
+      setFormData({ title: '', description: '', file: null, projectId: '', projectName: '', selectedMediaId: '' });
       loadMediaItems();
     } catch (error) {
       setUploadStatus({
         type: 'error',
-        message: 'Failed to upload media. Please try again.',
+        message: 'Failed to process media. Please try again.',
       });
     } finally {
       setIsUploading(false);
@@ -266,9 +289,35 @@ export default function AdminDashboard() {
                     type="file"
                     onChange={handleFileChange}
                     accept="image/*,video/*"
-                    required
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
+                </div>
+
+                {/* Or Select Existing Media */}
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                  <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                    Or Select Existing Media
+                  </label>
+                  <select
+                    value={formData.selectedMediaId}
+                    onChange={(e) => {
+                      const selectedMedia = mediaItems.find(item => item.id === e.target.value);
+                      setFormData(prev => ({
+                        ...prev,
+                        selectedMediaId: e.target.value,
+                        title: selectedMedia?.title || '',
+                        description: selectedMedia?.description || '',
+                      }));
+                    }}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  >
+                    <option value="">Select existing media...</option>
+                    {mediaItems.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.title} ({item.type}) - {item.projectName || 'No project'}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <button
@@ -276,7 +325,7 @@ export default function AdminDashboard() {
                   disabled={isUploading}
                   className="w-full button-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isUploading ? 'Uploading...' : 'Upload Media'}
+                  {isUploading ? 'Processing...' : 'Upload/Assign Media'}
                 </button>
               </form>
             </div>
@@ -301,14 +350,43 @@ export default function AdminDashboard() {
                         <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                           {item.description}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                          Type: {item.type} • {item.createdAt?.toDate?.()?.toLocaleDateString() || 'Unknown date'}
-                          {item.projectName && (
-                            <span className="ml-2 text-purple-600 dark:text-purple-400">
-                              • Project: {item.projectName}
-                            </span>
-                          )}
-                        </p>
+                                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        Type: {item.type} • {item.createdAt?.toDate?.()?.toLocaleDateString() || 'Unknown date'}
+                        {item.projectName && (
+                          <span className="ml-2 text-purple-600 dark:text-purple-400">
+                            • Project: {item.projectName}
+                          </span>
+                        )}
+                      </p>
+                      
+                      {/* Reassign Project */}
+                      <div className="mt-2">
+                        <select
+                          value={item.projectId || ''}
+                          onChange={async (e) => {
+                            try {
+                              const newProjectId = e.target.value;
+                              const selectedProject = projects.find(p => p.id === newProjectId);
+                              
+                              // Update the media item in Firestore
+                              await updateMediaProject(item.id!, newProjectId, selectedProject?.name || '');
+                              
+                              // Reload media items
+                              loadMediaItems();
+                            } catch (error) {
+                              console.error('Error reassigning media:', error);
+                            }
+                          }}
+                          className="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                        >
+                          <option value="">No project assigned</option>
+                          {projects.map((project) => (
+                            <option key={project.id || project.name} value={project.id || project.name}>
+                              {project.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                       </div>
                       <button
                         onClick={() => handleDelete(item.id!)}

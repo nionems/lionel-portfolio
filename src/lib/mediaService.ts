@@ -1,6 +1,6 @@
 import { db } from './firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 
 const storage = getStorage();
 
@@ -90,5 +90,18 @@ export const deleteMediaItem = async (id: string): Promise<void> => {
   } catch (error) {
     console.error('Error deleting media:', error);
     throw new Error('Failed to delete media item');
+  }
+};
+
+export const updateMediaProject = async (id: string, projectId: string, projectName: string): Promise<void> => {
+  try {
+    await updateDoc(doc(db, 'media', id), {
+      projectId: projectId || null,
+      projectName: projectName || null,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Error updating media project:', error);
+    throw new Error('Failed to update media project');
   }
 }; 
