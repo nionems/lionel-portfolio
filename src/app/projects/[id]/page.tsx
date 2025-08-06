@@ -15,6 +15,7 @@ export default function ProjectDetails() {
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [imageFit, setImageFit] = useState<'contain' | 'cover'>('contain'); // Default to show full image
   const [videoModal, setVideoModal] = useState<{
     isOpen: boolean;
     videoUrl: string;
@@ -171,9 +172,28 @@ export default function ProjectDetails() {
         {/* Media Carousel */}
         {media.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-              Project Gallery ({media.length} items)
-            </h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                Project Gallery ({media.length} items)
+              </h2>
+              
+              {/* Image Fit Toggle */}
+              {media[currentSlide]?.type === 'image' && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Image Fit:</span>
+                  <button
+                    onClick={() => setImageFit(imageFit === 'contain' ? 'cover' : 'contain')}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                      imageFit === 'contain'
+                        ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    {imageFit === 'contain' ? 'Show Full' : 'Fill Screen'}
+                  </button>
+                </div>
+              )}
+            </div>
             
             <div className="relative">
               {/* Main Carousel */}
@@ -181,11 +201,22 @@ export default function ProjectDetails() {
                 {media[currentSlide] && (
                   <div className="w-full h-full relative">
                     {media[currentSlide].type === 'image' ? (
-                      <img
-                        src={media[currentSlide].url}
-                        alt={media[currentSlide].title}
-                        className="w-full h-full object-cover"
-                      />
+                      <div className="w-full h-full relative">
+                        <img
+                          src={media[currentSlide].url}
+                          alt={media[currentSlide].title}
+                          className={`w-full h-full object-${imageFit}`}
+                        />
+                        <button
+                          onClick={() => window.open(media[currentSlide].url, '_blank')}
+                          className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
+                          title="Open in full screen"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                          </svg>
+                        </button>
+                      </div>
                                          ) : media[currentSlide].type === 'video' ? (
                        <div className="w-full h-full relative">
                          <video
@@ -268,7 +299,7 @@ export default function ProjectDetails() {
                         <img
                           src={item.url}
                           alt={item.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       ) : item.type === 'video' ? (
                         <VideoThumbnail
