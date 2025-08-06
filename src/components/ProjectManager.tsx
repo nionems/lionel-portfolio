@@ -50,14 +50,14 @@ export default function ProjectManager() {
       const projectData = {
         name: formData.name,
         description: formData.description,
-        technologies: formData.technologies.split(',').map(tech => tech.trim()).filter(tech => tech),
+        technologies: formData.technologies ? formData.technologies.split(',').map(tech => tech.trim()).filter(tech => tech) : [],
         liveUrl: formData.liveUrl || '#',
         githubUrl: formData.githubUrl || '#',
         imageUrl: formData.imageUrl || '',
       };
 
-      if (editingProject) {
-        await updateProject(editingProject.id!, projectData);
+      if (editingProject && editingProject.id) {
+        await updateProject(editingProject.id, projectData);
         setStatus({
           type: 'success',
           message: 'Project updated successfully!',
@@ -82,9 +82,10 @@ export default function ProjectManager() {
       setEditingProject(null);
       loadProjects();
     } catch (error) {
+      console.error('Error saving project:', error);
       setStatus({
         type: 'error',
-        message: 'Failed to save project. Please try again.',
+        message: `Failed to save project: ${error instanceof Error ? error.message : 'Unknown error'}`,
       });
     }
   };

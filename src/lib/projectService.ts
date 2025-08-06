@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, addDoc, getDocs, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, doc, serverTimestamp, getDoc } from 'firebase/firestore';
 
 export interface Project {
   id?: string;
@@ -97,12 +97,24 @@ export const createProject = async (project: Omit<Project, 'id'>): Promise<Proje
 
 export const updateProject = async (id: string, updates: Partial<Project>): Promise<void> => {
   try {
+    if (!id) {
+      throw new Error('Project ID is required for update');
+    }
+    
+    console.log('Updating project with ID:', id, 'Updates:', updates);
+    
+    // Check if the project exists first
+    const projectDoc = await getDoc(doc(db, 'projects', id));
+    if (!projectDoc.exists()) {
+      throw new Error(`Project with ID ${id} does not exist`);
+    }
+    
     await updateDoc(doc(db, 'projects', id), {
       ...updates,
       updatedAt: serverTimestamp(),
     });
   } catch (error) {
     console.error('Error updating project:', error);
-    throw new Error('Failed to update project');
+    throw new Error(`Failed to update project: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }; 
