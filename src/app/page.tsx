@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import RecentProjects from "@/components/RecentProjects";
 
 export default function HomePage() {
   return (
@@ -85,34 +86,7 @@ export default function HomePage() {
             View All Projects
           </Link>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm p-6 md:p-8 rounded-xl md:rounded-2xl shadow-lg card-hover border border-purple-100 dark:border-purple-800">
-            <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl md:rounded-2xl mb-4 flex items-center justify-center">
-              <span className="text-white font-bold text-lg md:text-2xl">P1</span>
-            </div>
-            <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2 md:mb-3">Project One</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-3 md:mb-4 text-sm md:text-base">A modern web application</p>
-            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-4 md:mb-6">
-              Built with Next.js, TypeScript, and modern web technologies.
-            </p>
-            <Link href="/case-studies" className="button-secondary text-xs md:text-sm py-2 px-3 md:py-2 md:px-4 inline-block">
-              View Case Study
-            </Link>
-          </div>
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm p-6 md:p-8 rounded-xl md:rounded-2xl shadow-lg card-hover border border-pink-100 dark:border-pink-800">
-            <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-r from-pink-500 to-red-500 rounded-xl md:rounded-2xl mb-4 flex items-center justify-center">
-              <span className="text-white font-bold text-lg md:text-2xl">P2</span>
-            </div>
-            <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2 md:mb-3">Project Two</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-3 md:mb-4 text-sm md:text-base">Full-stack development</p>
-            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-4 md:mb-6">
-              Complete solution with frontend, backend, and database.
-            </p>
-            <Link href="/case-studies" className="button-secondary text-xs md:text-sm py-2 px-3 md:py-2 md:px-4 inline-block">
-              View Case Study
-            </Link>
-          </div>
-        </div>
+        <RecentProjects />
       </section>
     </div>
   );
