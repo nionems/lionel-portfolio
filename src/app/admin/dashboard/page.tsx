@@ -16,6 +16,7 @@ export default function AdminDashboard() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [mediaByProject, setMediaByProject] = useState<Record<string, MediaItem[]>>({});
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<{
     type: 'success' | 'error' | null;
@@ -28,7 +29,7 @@ export default function AdminDashboard() {
     file: null as File | null,
     projectId: '',
     projectName: '',
-    selectedMediaId: '',
+    selectedMediaIds: [] as string[],
   });
 
   const [projects, setProjects] = useState<Project[]>([]);
@@ -69,6 +70,27 @@ export default function AdminDashboard() {
     try {
       const items = await getMediaItems();
       setMediaItems(items);
+      
+      // Group media by project
+      const grouped: Record<string, MediaItem[]> = {};
+      
+      // Add unassigned media
+      const unassigned = items.filter(item => !item.projectId);
+      if (unassigned.length > 0) {
+        grouped['Unassigned'] = unassigned;
+      }
+      
+      // Group by project
+      for (const item of items) {
+        if (item.projectId && item.projectName) {
+          if (!grouped[item.projectName]) {
+            grouped[item.projectName] = [];
+          }
+          grouped[item.projectName].push(item);
+        }
+      }
+      
+      setMediaByProject(grouped);
     } catch (error) {
       console.error('Error loading media items:', error);
     }
@@ -85,7 +107,7 @@ export default function AdminDashboard() {
     e.preventDefault();
     
     // Check if we have either a file or selected existing media
-    if (!formData.file && !formData.selectedMediaId) {
+    if (!formData.file && formData.selectedMediaIds.length === 0) {
       setUploadStatus({
         type: 'error',
         message: 'Please select a file or choose existing media.',
@@ -104,19 +126,18 @@ export default function AdminDashboard() {
           type: 'success',
           message: 'Media uploaded successfully!',
         });
-      } else if (formData.selectedMediaId) {
-        // Assign existing media to project
-        const selectedMedia = mediaItems.find(item => item.id === formData.selectedMediaId);
-        if (selectedMedia) {
-          await updateMediaProject(formData.selectedMediaId, formData.projectId, formData.projectName);
-          setUploadStatus({
-            type: 'success',
-            message: 'Media assigned to project successfully!',
-          });
+      } else if (formData.selectedMediaIds.length > 0) {
+        // Assign multiple existing media to project
+        for (const mediaId of formData.selectedMediaIds) {
+          await updateMediaProject(mediaId, formData.projectId, formData.projectName);
         }
+        setUploadStatus({
+          type: 'success',
+          message: `${formData.selectedMediaIds.length} media items assigned to project successfully!`,
+        });
       }
       
-      setFormData({ title: '', description: '', file: null, projectId: '', projectName: '', selectedMediaId: '' });
+      setFormData({ title: '', description: '', file: null, projectId: '', projectName: '', selectedMediaIds: [] });
       loadMediaItems();
     } catch (error) {
       setUploadStatus({
@@ -298,26 +319,53 @@ export default function AdminDashboard() {
                   <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                     Or Select Existing Media
                   </label>
-                  <select
-                    value={formData.selectedMediaId}
-                    onChange={(e) => {
-                      const selectedMedia = mediaItems.find(item => item.id === e.target.value);
-                      setFormData(prev => ({
-                        ...prev,
-                        selectedMediaId: e.target.value,
-                        title: selectedMedia?.title || '',
-                        description: selectedMedia?.description || '',
-                      }));
-                    }}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  >
-                    <option value="">Select existing media...</option>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
                     {mediaItems.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        {item.title} ({item.type}) - {item.projectName || 'No project'}
-                      </option>
+                      <label key={item.id} className="flex items-center space-x-3 p-2 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formData.selectedMediaIds.includes(item.id!)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData(prev => ({
+                                ...prev,
+                                selectedMediaIds: [...prev.selectedMediaIds, item.id!],
+                              }));
+                            } else {
+                              setFormData(prev => ({
+                                ...prev,
+                                selectedMediaIds: prev.selectedMediaIds.filter(id => id !== item.id),
+                              }));
+                            }
+                          }}
+                          className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
+                            {item.title}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {item.type} - {item.projectName || 'No project'}
+                          </div>
+                        </div>
+                      </label>
                     ))}
-                  </select>
+                  </div>
+                  
+                  {/* Selected Items Summary */}
+                  {formData.selectedMediaIds.length > 0 && (
+                    <div className="mt-2 p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                      <div className="text-sm font-medium text-purple-800 dark:text-purple-200">
+                        Selected: {formData.selectedMediaIds.length} item(s)
+                      </div>
+                      <div className="text-xs text-purple-600 dark:text-purple-300 mt-1">
+                        {mediaItems
+                          .filter(item => formData.selectedMediaIds.includes(item.id!))
+                          .map(item => item.title)
+                          .join(', ')}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <button
@@ -336,101 +384,116 @@ export default function AdminDashboard() {
                 Media Gallery ({mediaItems.length})
               </h2>
 
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {mediaItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                          {item.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                          {item.description}
-                        </p>
-                                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        Type: {item.type} • {item.createdAt?.toDate?.()?.toLocaleDateString() || 'Unknown date'}
-                        {item.projectName && (
-                          <span className="ml-2 text-purple-600 dark:text-purple-400">
-                            • Project: {item.projectName}
-                          </span>
-                        )}
-                      </p>
-                      
-                      {/* Reassign Project */}
-                      <div className="mt-2">
-                        <select
-                          value={item.projectId || ''}
-                          onChange={async (e) => {
-                            try {
-                              const newProjectId = e.target.value;
-                              const selectedProject = projects.find(p => p.id === newProjectId);
-                              
-                              // Update the media item in Firestore
-                              await updateMediaProject(item.id!, newProjectId, selectedProject?.name || '');
-                              
-                              // Reload media items
-                              loadMediaItems();
-                            } catch (error) {
-                              console.error('Error reassigning media:', error);
-                            }
-                          }}
-                          className="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                        >
-                          <option value="">No project assigned</option>
-                          {projects.map((project) => (
-                            <option key={project.id || project.name} value={project.id || project.name}>
-                              {project.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      </div>
-                      <button
-                        onClick={() => handleDelete(item.id!)}
-                        className="ml-4 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-                      >
-                        Delete
-                      </button>
-                    </div>
+              <div className="space-y-6 max-h-96 overflow-y-auto">
+                {Object.entries(mediaByProject).map(([projectName, items]) => (
+                  <div key={projectName} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                    <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-3 flex items-center">
+                      <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 px-2 py-1 rounded text-sm mr-2">
+                        {projectName}
+                      </span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        ({items.length} items)
+                      </span>
+                    </h3>
                     
-                    {item.type === 'image' ? (
-                      <img
-                        src={item.url}
-                        alt={item.title}
-                        className="mt-3 w-full h-32 object-cover rounded-lg"
-                      />
-                    ) : item.type === 'video' ? (
-                      <div className="mt-3 relative">
-                        <VideoThumbnail
-                          videoUrl={item.url}
-                          alt={item.title}
-                          className="w-full h-32 rounded-lg"
-                          showPlayButton={false}
-                        />
-                        <button
-                          onClick={() => setVideoModal({
-                            isOpen: true,
-                            videoUrl: item.url,
-                            title: item.title,
-                          })}
-                          className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-colors"
-                          title="Open in full screen"
+                    <div className="space-y-3">
+                      {items.map((item) => (
+                        <div
+                          key={item.id}
+                          className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                          </svg>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="mt-3 w-full h-32 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                        <span className="text-gray-500 dark:text-gray-400 text-sm">
-                          Unsupported media type: {item.type}
-                        </span>
-                      </div>
-                    )}
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                                {item.title}
+                              </h3>
+                              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                {item.description}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                Type: {item.type} • {item.createdAt?.toDate?.()?.toLocaleDateString() || 'Unknown date'}
+                                {item.projectName && (
+                                  <span className="ml-2 text-purple-600 dark:text-purple-400">
+                                    • Project: {item.projectName}
+                                  </span>
+                                )}
+                              </p>
+                              
+                              {/* Reassign Project */}
+                              <div className="mt-2">
+                                <select
+                                  value={item.projectId || ''}
+                                  onChange={async (e) => {
+                                    try {
+                                      const newProjectId = e.target.value;
+                                      const selectedProject = projects.find(p => p.id === newProjectId);
+                                      
+                                      // Update the media item in Firestore
+                                      await updateMediaProject(item.id!, newProjectId, selectedProject?.name || '');
+                                      
+                                      // Reload media items
+                                      loadMediaItems();
+                                    } catch (error) {
+                                      console.error('Error reassigning media:', error);
+                                    }
+                                  }}
+                                  className="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                >
+                                  <option value="">No project assigned</option>
+                                  {projects.map((project) => (
+                                    <option key={project.id || project.name} value={project.id || project.name}>
+                                      {project.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleDelete(item.id!)}
+                              className="ml-4 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                          
+                          {item.type === 'image' ? (
+                            <img
+                              src={item.url}
+                              alt={item.title}
+                              className="mt-3 w-full h-32 object-cover rounded-lg"
+                            />
+                          ) : item.type === 'video' ? (
+                            <div className="mt-3 relative">
+                              <VideoThumbnail
+                                videoUrl={item.url}
+                                alt={item.title}
+                                className="w-full h-32 rounded-lg"
+                                showPlayButton={false}
+                              />
+                              <button
+                                onClick={() => setVideoModal({
+                                  isOpen: true,
+                                  videoUrl: item.url,
+                                  title: item.title,
+                                })}
+                                className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-colors"
+                                title="Open in full screen"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                                </svg>
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="mt-3 w-full h-32 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                              <span className="text-gray-500 dark:text-gray-400 text-sm">
+                                Unsupported media type: {item.type}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
                 

@@ -69,9 +69,12 @@ export default function PortfolioGrid() {
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
         {projects.map((project, index) => {
-          const projectId = project.id || project.name;
-          const media = projectMedia[projectId] || [];
-          const firstMedia = media[0];
+                  const projectId = project.id || project.name;
+        const media = projectMedia[projectId] || [];
+        
+        // Get featured media or first media
+        const featuredMedia = media.find(m => m.id === project.featuredMediaId);
+        const firstMedia = featuredMedia || media[0];
 
           const gradientColors = [
             'from-purple-600 to-blue-600',

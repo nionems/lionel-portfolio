@@ -7,6 +7,7 @@ export interface Project {
   description: string;
   technologies: string[];
   imageUrl?: string;
+  featuredMediaId?: string; // ID of the featured media item
   liveUrl?: string;
   githubUrl?: string;
   createdAt?: any;

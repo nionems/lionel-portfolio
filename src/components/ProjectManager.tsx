@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { getProjects, createProject, updateProject, Project } from '@/lib/projectService';
+import { getMediaByProject, MediaItem } from '@/lib/mediaService';
 
 export default function ProjectManager() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [projectMediaMap, setProjectMediaMap] = useState<Record<string, MediaItem[]>>({});
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [status, setStatus] = useState<{
@@ -19,6 +21,7 @@ export default function ProjectManager() {
     liveUrl: '',
     githubUrl: '',
     imageUrl: '',
+    featuredMediaId: '',
   });
 
   useEffect(() => {
@@ -29,6 +32,15 @@ export default function ProjectManager() {
     try {
       const projectList = await getProjects();
       setProjects(projectList);
+
+      // Load media for each project
+      const mediaMap: Record<string, MediaItem[]> = {};
+      for (const project of projectList) {
+        const projectId = project.id || project.name;
+        const media = await getMediaByProject(projectId);
+        mediaMap[projectId] = media;
+      }
+      setProjectMediaMap(mediaMap);
     } catch (error) {
       console.error('Error loading projects:', error);
     }
@@ -54,6 +66,7 @@ export default function ProjectManager() {
         liveUrl: formData.liveUrl || '#',
         githubUrl: formData.githubUrl || '#',
         imageUrl: formData.imageUrl || '',
+        featuredMediaId: formData.featuredMediaId || '',
       };
 
       if (editingProject && editingProject.id) {
@@ -77,6 +90,7 @@ export default function ProjectManager() {
         liveUrl: '',
         githubUrl: '',
         imageUrl: '',
+        featuredMediaId: '',
       });
       setIsAddingProject(false);
       setEditingProject(null);
@@ -99,6 +113,7 @@ export default function ProjectManager() {
       liveUrl: project.liveUrl || '',
       githubUrl: project.githubUrl || '',
       imageUrl: project.imageUrl || '',
+      featuredMediaId: project.featuredMediaId || '',
     });
     setIsAddingProject(true);
   };
@@ -113,6 +128,7 @@ export default function ProjectManager() {
       liveUrl: '',
       githubUrl: '',
       imageUrl: '',
+      featuredMediaId: '',
     });
   };
 
@@ -234,6 +250,32 @@ export default function ProjectManager() {
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 placeholder="https://example.com/project-image.jpg"
               />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                Featured Media (optional)
+              </label>
+              <select
+                name="featuredMediaId"
+                value={formData.featuredMediaId}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              >
+                <option value="">No featured media</option>
+                {projects.map((project) => {
+                  // Get media for this project
+                  const projectMedia = projectMediaMap[project.id || project.name] || [];
+                  return projectMedia.map((media) => (
+                    <option key={media.id} value={media.id}>
+                      {media.title} ({media.type}) - {project.name}
+                    </option>
+                  ));
+                })}
+              </select>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Select which media item should be featured for this project
+              </p>
             </div>
 
             <div className="flex gap-4">

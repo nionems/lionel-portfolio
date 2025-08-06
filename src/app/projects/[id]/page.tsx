@@ -41,7 +41,15 @@ export default function ProjectDetails() {
         
         // Load project media
         const projectMedia = await getMediaByProject(projectId);
-        setMedia(projectMedia);
+        
+        // Sort media to show featured media first
+        const sortedMedia = [...projectMedia].sort((a, b) => {
+          if (a.id === foundProject.featuredMediaId) return -1;
+          if (b.id === foundProject.featuredMediaId) return 1;
+          return 0;
+        });
+        
+        setMedia(sortedMedia);
       } catch (error) {
         console.error('Error loading project details:', error);
       } finally {
