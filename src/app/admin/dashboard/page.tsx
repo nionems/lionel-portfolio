@@ -9,6 +9,7 @@ import { uploadMedia, getMediaItems, deleteMediaItem, MediaItem } from '@/lib/me
 import { getProjects, Project } from '@/lib/projectService';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import ProjectManager from '@/components/ProjectManager';
+import VideoModal from '@/components/VideoModal';
 
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
@@ -30,6 +31,15 @@ export default function AdminDashboard() {
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [activeTab, setActiveTab] = useState<'media' | 'projects'>('media');
+  const [videoModal, setVideoModal] = useState<{
+    isOpen: boolean;
+    videoUrl: string;
+    title: string;
+  }>({
+    isOpen: false,
+    videoUrl: '',
+    title: '',
+  });
 
   useEffect(() => {
     if (!loading && !user) {
@@ -313,12 +323,40 @@ export default function AdminDashboard() {
                         alt={item.title}
                         className="mt-3 w-full h-32 object-cover rounded-lg"
                       />
+                    ) : item.type === 'video' ? (
+                      <div className="mt-3 relative">
+                        <video
+                          src={item.url}
+                          controls
+                          preload="metadata"
+                          className="w-full h-32 object-cover rounded-lg"
+                          poster={item.url + '?thumb=1'}
+                        >
+                          <source src={item.url} type="video/mp4" />
+                          <source src={item.url} type="video/webm" />
+                          <source src={item.url} type="video/ogg" />
+                          Your browser does not support the video tag.
+                        </video>
+                        <button
+                          onClick={() => setVideoModal({
+                            isOpen: true,
+                            videoUrl: item.url,
+                            title: item.title,
+                          })}
+                          className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1 transition-colors"
+                          title="Open in full screen"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                          </svg>
+                        </button>
+                      </div>
                     ) : (
-                      <video
-                        src={item.url}
-                        controls
-                        className="mt-3 w-full h-32 object-cover rounded-lg"
-                      />
+                      <div className="mt-3 w-full h-32 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                        <span className="text-gray-500 dark:text-gray-400 text-sm">
+                          Unsupported media type: {item.type}
+                        </span>
+                      </div>
                     )}
                   </div>
                 ))}
@@ -337,6 +375,14 @@ export default function AdminDashboard() {
           <ProjectManager />
         )}
       </div>
+
+      {/* Video Modal */}
+      <VideoModal
+        isOpen={videoModal.isOpen}
+        onClose={() => setVideoModal({ isOpen: false, videoUrl: '', title: '' })}
+        videoUrl={videoModal.videoUrl}
+        title={videoModal.title}
+      />
     </div>
   );
 } 
