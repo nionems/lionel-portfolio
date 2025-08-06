@@ -16,6 +16,7 @@ A modern, responsive portfolio website built with Next.js, TypeScript, and Tailw
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4
 - **Theme**: Custom dark/light mode implementation
+- **Backend**: Firebase (Firestore, Analytics)
 - **Deployment**: Ready for Vercel deployment
 
 ## Pages
@@ -38,12 +39,23 @@ cd lionel-portfolio
 npm install
 ```
 
-3. Run the development server:
+3. Set up Firebase:
+   - Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
+   - Enable Firestore Database and Analytics
+   - Add a web app to your project
+   - Copy the Firebase config values
+   - Create a `.env.local` file with your Firebase configuration:
+   ```bash
+   cp firebase-env-template.txt .env.local
+   # Edit .env.local with your Firebase config values
+   ```
+
+4. Run the development server:
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Contact
 
