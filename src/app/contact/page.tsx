@@ -114,6 +114,15 @@ export default function ContactPage() {
                   <p className="text-gray-600 dark:text-gray-300 text-xs md:text-sm">View my code</p>
                 </div>
               </a>
+              <a href="https://www.youtube.com/@lionelcoevoet" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 md:space-x-4 p-3 md:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg md:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-bold text-sm md:text-base">Y</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm md:text-base">YouTube</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-xs md:text-sm">Watch my content</p>
+                </div>
+              </a>
             </div>
           </div>
 
