@@ -134,9 +134,9 @@ export default function PortfolioGrid() {
                     </span>
                   ))}
                 </div>
-                <Link href="/case-studies" className="button-secondary text-xs md:text-sm py-2 px-3 md:py-2 md:px-4 inline-block">
-                  View Details
-                </Link>
+                              <Link href={`/projects/${projectId}`} className="button-secondary text-xs md:text-sm py-2 px-3 md:py-2 md:px-4 inline-block">
+                View Details
+              </Link>
               </div>
             </div>
           );
