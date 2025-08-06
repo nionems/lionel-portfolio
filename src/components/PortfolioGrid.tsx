@@ -4,11 +4,22 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getProjects, Project } from '@/lib/projectService';
 import { getMediaByProject, MediaItem } from '@/lib/mediaService';
+import VideoModal from '@/components/VideoModal';
+import VideoThumbnail from '@/components/VideoThumbnail';
 
 export default function PortfolioGrid() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectMedia, setProjectMedia] = useState<Record<string, MediaItem[]>>({});
   const [loading, setLoading] = useState(true);
+  const [videoModal, setVideoModal] = useState<{
+    isOpen: boolean;
+    videoUrl: string;
+    title: string;
+  }>({
+    isOpen: false,
+    videoUrl: '',
+    title: '',
+  });
 
   useEffect(() => {
     const loadProjectsAndMedia = async () => {
@@ -90,27 +101,17 @@ export default function PortfolioGrid() {
                     className="w-full h-full object-cover"
                   />
                 ) : firstMedia.type === 'video' ? (
-                  <div className="relative w-full h-full">
-                    <video
-                      src={firstMedia.url}
-                      className="w-full h-full object-cover"
-                      muted
-                      loop
-                      preload="metadata"
-                      poster={firstMedia.url + '?thumb=1'}
-                    >
-                      <source src={firstMedia.url} type="video/mp4" />
-                      <source src={firstMedia.url} type="video/webm" />
-                      <source src={firstMedia.url} type="video/ogg" />
-                    </video>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="bg-black/50 rounded-full p-3">
-                        <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
+                  <VideoThumbnail
+                    videoUrl={firstMedia.url}
+                    alt={firstMedia.title}
+                    className="w-full h-full group cursor-pointer"
+                    onClick={() => setVideoModal({
+                      isOpen: true,
+                      videoUrl: firstMedia.url,
+                      title: firstMedia.title,
+                    })}
+                    showPlayButton={true}
+                  />
                 ) : (
                   <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                     <span className="text-gray-500 dark:text-gray-400 text-sm">
@@ -140,5 +141,13 @@ export default function PortfolioGrid() {
         );
       })}
     </div>
+
+    {/* Video Modal */}
+    <VideoModal
+      isOpen={videoModal.isOpen}
+      onClose={() => setVideoModal({ isOpen: false, videoUrl: '', title: '' })}
+      videoUrl={videoModal.videoUrl}
+      title={videoModal.title}
+    />
   );
 } 

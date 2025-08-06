@@ -10,6 +10,7 @@ import { getProjects, Project } from '@/lib/projectService';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import ProjectManager from '@/components/ProjectManager';
 import VideoModal from '@/components/VideoModal';
+import VideoThumbnail from '@/components/VideoThumbnail';
 
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
@@ -325,18 +326,12 @@ export default function AdminDashboard() {
                       />
                     ) : item.type === 'video' ? (
                       <div className="mt-3 relative">
-                        <video
-                          src={item.url}
-                          controls
-                          preload="metadata"
-                          className="w-full h-32 object-cover rounded-lg"
-                          poster={item.url + '?thumb=1'}
-                        >
-                          <source src={item.url} type="video/mp4" />
-                          <source src={item.url} type="video/webm" />
-                          <source src={item.url} type="video/ogg" />
-                          Your browser does not support the video tag.
-                        </video>
+                        <VideoThumbnail
+                          videoUrl={item.url}
+                          alt={item.title}
+                          className="w-full h-32 rounded-lg"
+                          showPlayButton={false}
+                        />
                         <button
                           onClick={() => setVideoModal({
                             isOpen: true,
