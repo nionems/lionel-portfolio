@@ -45,14 +45,16 @@ export default function PortfolioGrid() {
       try {
         const projectList = await getProjects();
         
-        // Sort projects by creation date (most recent first)
+        // Sort projects by project date (most recent first)
         const sortedProjects = projectList.sort((a, b) => {
-          // Try to get dates from multiple sources
+          // Try to get dates from projectDate field (the date you entered)
           let dateA: Date;
           let dateB: Date;
           
-          // For project A
-          if (a.createdAt?.toDate) {
+          // For project A - use projectDate (the date you entered)
+          if (a.projectDate) {
+            dateA = new Date(a.projectDate);
+          } else if (a.createdAt?.toDate) {
             dateA = a.createdAt.toDate();
           } else if (a.createdAt instanceof Date) {
             dateA = a.createdAt;
@@ -62,8 +64,10 @@ export default function PortfolioGrid() {
             dateA = new Date(0); // Default to epoch if no date
           }
           
-          // For project B
-          if (b.createdAt?.toDate) {
+          // For project B - use projectDate (the date you entered)
+          if (b.projectDate) {
+            dateB = new Date(b.projectDate);
+          } else if (b.createdAt?.toDate) {
             dateB = b.createdAt.toDate();
           } else if (b.createdAt instanceof Date) {
             dateB = b.createdAt;
@@ -73,7 +77,7 @@ export default function PortfolioGrid() {
             dateB = new Date(0); // Default to epoch if no date
           }
           
-          // Sort by most recent first
+          // Sort by most recent project date first
           return dateB.getTime() - dateA.getTime();
         });
         
