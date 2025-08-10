@@ -11,6 +11,8 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import ProjectManager from '@/components/ProjectManager';
 import VideoModal from '@/components/VideoModal';
 import VideoThumbnail from '@/components/VideoThumbnail';
+import { storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
@@ -33,7 +35,14 @@ export default function AdminDashboard() {
   });
 
   const [projects, setProjects] = useState<Project[]>([]);
-  const [activeTab, setActiveTab] = useState<'media' | 'projects'>('media');
+  const [activeTab, setActiveTab] = useState<'media' | 'projects' | 'resume'>('media');
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [currentResume, setCurrentResume] = useState<string | null>(null);
+  const [isUploadingResume, setIsUploadingResume] = useState(false);
+  const [resumeStatus, setResumeStatus] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' });
   const [videoModal, setVideoModal] = useState<{
     isOpen: boolean;
     videoUrl: string;
@@ -54,8 +63,77 @@ export default function AdminDashboard() {
     if (user) {
       loadMediaItems();
       loadProjects();
+      loadCurrentResume();
     }
   }, [user]);
+
+  const loadCurrentResume = async () => {
+    try {
+      // Check if there's a resume in Firebase Storage
+      const resumeRef = ref(storage, 'resume/resume.pdf');
+      const url = await getDownloadURL(resumeRef);
+      setCurrentResume(url);
+    } catch (error) {
+      // Resume doesn't exist yet
+      setCurrentResume(null);
+    }
+  };
+
+  const handleResumeFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === 'application/pdf') {
+      setResumeFile(file);
+    } else {
+      setResumeStatus({
+        type: 'error',
+        message: 'Please select a valid PDF file.',
+      });
+    }
+  };
+
+  const handleResumeUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!resumeFile) {
+      setResumeStatus({
+        type: 'error',
+        message: 'Please select a resume file.',
+      });
+      return;
+    }
+
+    setIsUploadingResume(true);
+    setResumeStatus({ type: null, message: '' });
+
+    try {
+      // Upload resume to Firebase Storage
+      const resumeRef = ref(storage, 'resume/resume.pdf');
+      await uploadBytes(resumeRef, resumeFile);
+      
+      // Get the download URL
+      const url = await getDownloadURL(resumeRef);
+      setCurrentResume(url);
+      
+      setResumeStatus({
+        type: 'success',
+        message: 'Resume uploaded successfully!',
+      });
+      
+      setResumeFile(null);
+      // Reset the file input
+      const fileInput = document.getElementById('resume-file') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+      
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      setResumeStatus({
+        type: 'error',
+        message: 'Failed to upload resume. Please try again.',
+      });
+    } finally {
+      setIsUploadingResume(false);
+    }
+  };
 
   const loadProjects = async () => {
     try {
@@ -237,6 +315,16 @@ export default function AdminDashboard() {
             }`}
           >
             Project Management
+          </button>
+          <button
+            onClick={() => setActiveTab('resume')}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              activeTab === 'resume'
+                ? 'bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 shadow-sm'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100'
+            }`}
+          >
+            Resume Management
           </button>
         </div>
 
@@ -541,6 +629,115 @@ export default function AdminDashboard() {
 
         {activeTab === 'projects' && (
           <ProjectManager />
+        )}
+
+        {activeTab === 'resume' && (
+          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-purple-100 dark:border-purple-800">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+              Resume Management
+            </h2>
+
+            {resumeStatus.type && (
+              <div className={`mb-4 p-3 rounded-lg text-sm ${
+                resumeStatus.type === 'success' 
+                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+              }`}>
+                {resumeStatus.message}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Upload Resume */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                  Upload New Resume
+                </h3>
+                <form onSubmit={handleResumeUpload} className="space-y-4">
+                  <div>
+                    <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                      Resume File (PDF only)
+                    </label>
+                    <input
+                      id="resume-file"
+                      type="file"
+                      onChange={handleResumeFileChange}
+                      accept=".pdf"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Only PDF files are accepted. Maximum file size: 10MB
+                    </p>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isUploadingResume || !resumeFile}
+                    className="w-full button-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isUploadingResume ? 'Uploading...' : 'Upload Resume'}
+                  </button>
+                </form>
+              </div>
+
+              {/* Current Resume */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                  Current Resume
+                </h3>
+                
+                {currentResume ? (
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                          <span className="text-red-600 dark:text-red-400 text-xl">📄</span>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                            Resume.pdf
+                          </h4>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Available for download
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <a
+                        href={currentResume}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="button-secondary flex-1 text-center"
+                      >
+                        View Resume
+                      </a>
+                      <a
+                        href={currentResume}
+                        download="resume.pdf"
+                        className="button-primary flex-1 text-center"
+                      >
+                        Download
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-8 text-center">
+                    <div className="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-gray-400 text-2xl">📄</span>
+                    </div>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      No resume uploaded yet
+                    </p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+                      Upload your resume to make it available on your portfolio
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         )}
       </div>
 
