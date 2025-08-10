@@ -26,7 +26,7 @@ export default function AdminDashboard() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    file: null as File | null,
+    files: [] as File[],
     projectId: '',
     projectName: '',
     selectedMediaIds: [] as string[],
@@ -101,20 +101,20 @@ export default function AdminDashboard() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, file }));
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setFormData(prev => ({ ...prev, files }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check if we have either a file or selected existing media
-    if (!formData.file && formData.selectedMediaIds.length === 0) {
+    // Check if we have either files or selected existing media
+    if (formData.files.length === 0 && formData.selectedMediaIds.length === 0) {
       setUploadStatus({
         type: 'error',
-        message: 'Please select a file or choose existing media.',
+        message: 'Please select files or choose existing media.',
       });
       return;
     }
@@ -123,12 +123,15 @@ export default function AdminDashboard() {
     setUploadStatus({ type: null, message: '' });
 
     try {
-      if (formData.file) {
-        // Upload new file
-        await uploadMedia(formData.file, formData.title, formData.description, formData.projectId, formData.projectName);
+      if (formData.files.length > 0) {
+        // Upload multiple new files
+        const uploadPromises = formData.files.map(file => 
+          uploadMedia(file, formData.title, formData.description, formData.projectId, formData.projectName)
+        );
+        await Promise.all(uploadPromises);
         setUploadStatus({
           type: 'success',
-          message: 'Media uploaded successfully!',
+          message: `${formData.files.length} media files uploaded successfully!`,
         });
       } else if (formData.selectedMediaIds.length > 0) {
         // Assign multiple existing media to project
@@ -141,7 +144,7 @@ export default function AdminDashboard() {
         });
       }
       
-      setFormData({ title: '', description: '', file: null, projectId: '', projectName: '', selectedMediaIds: [] });
+      setFormData({ title: '', description: '', files: [], projectId: '', projectName: '', selectedMediaIds: [] });
       loadMediaItems();
       refreshProjectList(); // Refresh project list after media assignment
     } catch (error) {
@@ -321,14 +324,25 @@ export default function AdminDashboard() {
 
                 <div>
                   <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
-                    File (Image or Video)
+                    Files (Images or Videos) - Multiple Selection
                   </label>
                   <input
                     type="file"
                     onChange={handleFileChange}
                     accept="image/*,video/*"
+                    multiple
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
+                  {formData.files.length > 0 && (
+                    <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                      <div className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                        Selected: {formData.files.length} file(s)
+                      </div>
+                      <div className="text-xs text-blue-600 dark:text-blue-300 mt-1">
+                        {formData.files.map(file => file.name).join(', ')}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Or Select Existing Media */}

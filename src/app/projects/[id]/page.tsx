@@ -16,6 +16,7 @@ export default function ProjectDetails() {
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [imageFit, setImageFit] = useState<'contain' | 'cover'>('contain'); // Default to show full image
+  const [videoFit, setVideoFit] = useState<'contain' | 'cover'>('contain'); // Default to show full video
   const [videoModal, setVideoModal] = useState<{
     isOpen: boolean;
     videoUrl: string;
@@ -177,7 +178,7 @@ export default function ProjectDetails() {
                 Project Gallery ({media.length} items)
               </h2>
               
-              {/* Image Fit Toggle */}
+              {/* Media Fit Toggle */}
               {media[currentSlide]?.type === 'image' && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-gray-600 dark:text-gray-400">Image Fit:</span>
@@ -190,6 +191,21 @@ export default function ProjectDetails() {
                     }`}
                   >
                     {imageFit === 'contain' ? 'Show Full' : 'Fill Screen'}
+                  </button>
+                </div>
+              )}
+              {media[currentSlide]?.type === 'video' && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Video Fit:</span>
+                  <button
+                    onClick={() => setVideoFit(videoFit === 'contain' ? 'cover' : 'contain')}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                      videoFit === 'contain'
+                        ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    {videoFit === 'contain' ? 'Show Full' : 'Fill Screen'}
                   </button>
                 </div>
               )}
@@ -221,7 +237,7 @@ export default function ProjectDetails() {
                        <div className="w-full h-full relative">
                          <video
                            src={media[currentSlide].url}
-                           className="w-full h-full object-cover"
+                           className={`w-full h-full object-${videoFit}`}
                            controls
                            autoPlay
                            muted
