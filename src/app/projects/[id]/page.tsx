@@ -126,9 +126,16 @@ export default function ProjectDetails() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Project Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text mb-4">
-            {project.name}
-          </h1>
+          <div className="flex justify-between items-start mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">
+              {project.name}
+            </h1>
+            {project.projectDate && (
+              <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-full">
+                {new Date(project.projectDate).toLocaleDateString()}
+              </span>
+            )}
+          </div>
           <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl">
             {project.description}
           </p>

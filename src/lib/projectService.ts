@@ -10,6 +10,7 @@ export interface Project {
   featuredMediaId?: string; // ID of the featured media item
   liveUrl?: string;
   githubUrl?: string;
+  projectDate?: string; // Date when the project was completed/launched
   createdAt?: any;
   updatedAt?: any;
 }

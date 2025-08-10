@@ -11,6 +11,7 @@ export default function RecentProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectMedia, setProjectMedia] = useState<Record<string, MediaItem[]>>({});
   const [loading, setLoading] = useState(true);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Record<string, boolean>>({});
   const [videoModal, setVideoModal] = useState<{
     isOpen: boolean;
     videoUrl: string;
@@ -20,6 +21,24 @@ export default function RecentProjects() {
     videoUrl: '',
     title: '',
   });
+
+  // Helper function to truncate text to approximately 5 lines
+  const truncateText = (text: string, maxLength: number = 200) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+  };
+
+  // Helper function to check if text needs truncation
+  const needsTruncation = (text: string, maxLength: number = 200) => {
+    return text.length > maxLength;
+  };
+
+  const toggleDescription = (projectId: string) => {
+    setExpandedDescriptions(prev => ({
+      ...prev,
+      [projectId]: !prev[projectId]
+    }));
+  };
 
   useEffect(() => {
     const loadRecentProjects = async () => {
@@ -134,12 +153,32 @@ export default function RecentProjects() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2 md:mb-3 truncate">
-                    {project.name}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-3 md:mb-4 text-sm md:text-base line-clamp-2">
-                    {project.description}
-                  </p>
+                  <div className="flex justify-between items-start mb-2 md:mb-3">
+                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100 truncate">
+                      {project.name}
+                    </h3>
+                    {project.projectDate && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full flex-shrink-0 ml-2">
+                        {new Date(project.projectDate).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mb-3 md:mb-4">
+                    <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
+                      {expandedDescriptions[projectId] 
+                        ? project.description 
+                        : truncateText(project.description)
+                      }
+                    </p>
+                    {needsTruncation(project.description) && (
+                      <button
+                        onClick={() => toggleDescription(projectId)}
+                        className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 text-sm font-medium mt-1 transition-colors"
+                      >
+                        {expandedDescriptions[projectId] ? 'Read Less' : 'Read More'}
+                      </button>
+                    )}
+                  </div>
                   <div className="flex flex-wrap gap-1 md:gap-2 mb-4 md:mb-6">
                     {project.technologies.slice(0, 3).map((tech, techIndex) => (
                       <span key={techIndex} className="bg-purple-100 text-purple-800 px-2 py-1 md:px-3 md:py-1 rounded-full text-xs md:text-sm">

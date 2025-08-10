@@ -11,6 +11,7 @@ export default function PortfolioGrid() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectMedia, setProjectMedia] = useState<Record<string, MediaItem[]>>({});
   const [loading, setLoading] = useState(true);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Record<string, boolean>>({});
   const [videoModal, setVideoModal] = useState<{
     isOpen: boolean;
     videoUrl: string;
@@ -21,15 +22,41 @@ export default function PortfolioGrid() {
     title: '',
   });
 
+  // Helper function to truncate text to approximately 5 lines
+  const truncateText = (text: string, maxLength: number = 200) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+  };
+
+  // Helper function to check if text needs truncation
+  const needsTruncation = (text: string, maxLength: number = 200) => {
+    return text.length > maxLength;
+  };
+
+  const toggleDescription = (projectId: string) => {
+    setExpandedDescriptions(prev => ({
+      ...prev,
+      [projectId]: !prev[projectId]
+    }));
+  };
+
   useEffect(() => {
     const loadProjectsAndMedia = async () => {
       try {
         const projectList = await getProjects();
-        setProjects(projectList);
+        
+        // Sort projects by creation date (most recent first)
+        const sortedProjects = projectList.sort((a, b) => {
+          const dateA = a.createdAt?.toDate?.() || new Date(0);
+          const dateB = b.createdAt?.toDate?.() || new Date(0);
+          return dateB.getTime() - dateA.getTime();
+        });
+        
+        setProjects(sortedProjects);
 
         // Load media for each project
         const mediaMap: Record<string, MediaItem[]> = {};
-        for (const project of projectList) {
+        for (const project of sortedProjects) {
           const projectId = project.id || project.name;
           const media = await getMediaByProject(projectId);
           mediaMap[projectId] = media;
@@ -128,8 +155,30 @@ export default function PortfolioGrid() {
                 )}
               </div>
               <div className="p-4 md:p-6">
-                <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">{project.name}</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-3 md:mb-4 text-sm md:text-base">{project.description}</p>
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100">{project.name}</h3>
+                  {project.projectDate && (
+                    <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                      {new Date(project.projectDate).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+                <div className="mb-3 md:mb-4">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
+                    {expandedDescriptions[projectId] 
+                      ? project.description 
+                      : truncateText(project.description)
+                    }
+                  </p>
+                  {needsTruncation(project.description) && (
+                    <button
+                      onClick={() => toggleDescription(projectId)}
+                      className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 text-sm font-medium mt-1 transition-colors"
+                    >
+                      {expandedDescriptions[projectId] ? 'Read Less' : 'Read More'}
+                    </button>
+                  )}
+                </div>
                 <div className="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-4">
                   {project.technologies.map((tech, techIndex) => (
                     <span key={techIndex} className="bg-purple-100 text-purple-800 px-2 py-1 md:px-3 md:py-1 rounded-full text-xs md:text-sm">

@@ -22,6 +22,7 @@ export default function ProjectManager() {
     githubUrl: '',
     imageUrl: '',
     featuredMediaId: '',
+    projectDate: '',
   });
 
   useEffect(() => {
@@ -67,6 +68,7 @@ export default function ProjectManager() {
         githubUrl: formData.githubUrl || '#',
         imageUrl: formData.imageUrl || '',
         featuredMediaId: formData.featuredMediaId || '',
+        projectDate: formData.projectDate || '',
       };
 
       if (editingProject && editingProject.id) {
@@ -91,6 +93,7 @@ export default function ProjectManager() {
         githubUrl: '',
         imageUrl: '',
         featuredMediaId: '',
+        projectDate: '',
       });
       setIsAddingProject(false);
       setEditingProject(null);
@@ -114,6 +117,7 @@ export default function ProjectManager() {
       githubUrl: project.githubUrl || '',
       imageUrl: project.imageUrl || '',
       featuredMediaId: project.featuredMediaId || '',
+      projectDate: project.projectDate || '',
     });
     setIsAddingProject(true);
   };
@@ -129,6 +133,7 @@ export default function ProjectManager() {
       githubUrl: '',
       imageUrl: '',
       featuredMediaId: '',
+      projectDate: '',
     });
   };
 
@@ -236,6 +241,22 @@ export default function ProjectManager() {
                   placeholder="https://github.com/username/project"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                Project Date (optional)
+              </label>
+              <input
+                type="date"
+                name="projectDate"
+                value={formData.projectDate}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Date when the project was completed or launched
+              </p>
             </div>
 
             <div>
