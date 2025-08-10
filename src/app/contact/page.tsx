@@ -28,11 +28,11 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm md:text-base">Email</h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">nionems@icloud.com</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">coevoetlionel@gmail.com</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3 md:space-x-4">
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-lg md:text-xl">📍</span>
                 </div>
                 <div>
