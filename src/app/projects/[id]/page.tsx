@@ -17,6 +17,7 @@ export default function ProjectDetails() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [imageFit, setImageFit] = useState<'contain' | 'cover'>('contain'); // Default to show full image
   const [videoFit, setVideoFit] = useState<'contain' | 'cover'>('contain'); // Default to show full video
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const [videoModal, setVideoModal] = useState<{
     isOpen: boolean;
     videoUrl: string;
@@ -26,6 +27,21 @@ export default function ProjectDetails() {
     videoUrl: '',
     title: '',
   });
+
+  // Helper function to truncate text to approximately 8 lines
+  const truncateText = (text: string, maxLength: number = 400) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+  };
+
+  // Helper function to check if text needs truncation
+  const needsTruncation = (text: string, maxLength: number = 400) => {
+    return text.length > maxLength;
+  };
+
+  const toggleDescription = () => {
+    setDescriptionExpanded(prev => !prev);
+  };
 
   useEffect(() => {
     const loadProjectAndMedia = async () => {
@@ -136,9 +152,22 @@ export default function ProjectDetails() {
               </span>
             )}
           </div>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl">
-            {project.description}
-          </p>
+          <div className="max-w-3xl">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300">
+              {descriptionExpanded 
+                ? project.description 
+                : truncateText(project.description)
+              }
+            </p>
+            {needsTruncation(project.description) && (
+              <button
+                onClick={toggleDescription}
+                className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 text-sm font-medium mt-2 transition-colors"
+              >
+                {descriptionExpanded ? 'Read Less' : 'Read More'}
+              </button>
+            )}
+          </div>
           
           {/* Technologies */}
           <div className="flex flex-wrap gap-2 mt-4">
