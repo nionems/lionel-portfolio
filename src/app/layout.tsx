@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthProvider";
 import Footer from "@/components/Footer";
+import StructuredData from "@/components/StructuredData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +18,80 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lionel's Portfolio",
-  description: "Tech portfolio showcasing projects and case studies",
+  title: {
+    default: "Lionel Coevoet - Full Stack Developer Portfolio",
+    template: "%s | Lionel Coevoet"
+  },
+  description: "Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Specializing in mobile app development and innovative technology solutions.",
+  keywords: [
+    "Lionel Coevoet",
+    "Full Stack Developer",
+    "React Developer",
+    "Next.js Developer",
+    "Mobile App Developer",
+    "Node.js Developer",
+    "Python Developer",
+    "Java Developer",
+    "Firebase Developer",
+    "MongoDB Developer",
+    "AWS Developer",
+    "Portfolio",
+    "Web Development",
+    "Mobile Development",
+    "Sydney Developer",
+    "Australian Developer"
+  ],
+  authors: [{ name: "Lionel Coevoet" }],
+  creator: "Lionel Coevoet",
+  publisher: "Lionel Coevoet",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://lionel-portfolio.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://lionel-portfolio.vercel.app',
+    title: 'Lionel Coevoet - Full Stack Developer Portfolio',
+    description: 'Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Specializing in mobile app development and innovative technology solutions.',
+    siteName: 'Lionel Coevoet Portfolio',
+    images: [
+      {
+        url: '/images/FA2_5340_2_edited.png',
+        width: 1200,
+        height: 630,
+        alt: 'Lionel Coevoet - Full Stack Developer',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Lionel Coevoet - Full Stack Developer Portfolio',
+    description: 'Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS.',
+    images: ['/images/FA2_5340_2_edited.png'],
+    creator: '@lionelcoevoet',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-verification-code',
+    yandex: 'your-yandex-verification-code',
+    yahoo: 'your-yahoo-verification-code',
+  },
 };
 
 function Navigation() {
@@ -105,6 +178,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <StructuredData />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} bg-gradient-to-br from-white via-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-300`}>
         <ThemeProvider>

@@ -3,6 +3,36 @@ import Image from "next/image";
 import RecentProjects from "@/components/RecentProjects";
 import ResumeButton from "@/components/ResumeButton";
 import ProfileImage from "@/components/ProfileImage";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Lionel Coevoet - Full Stack Developer Portfolio",
+  description: "Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Specializing in mobile app development and innovative technology solutions.",
+  keywords: [
+    "Lionel Coevoet",
+    "Full Stack Developer",
+    "React Developer",
+    "Next.js Developer",
+    "Mobile App Developer",
+    "Sydney Developer",
+    "Australian Developer",
+    "Portfolio"
+  ],
+  openGraph: {
+    title: "Lionel Coevoet - Full Stack Developer Portfolio",
+    description: "Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS.",
+    type: "website",
+    url: "https://lionel-portfolio.vercel.app",
+    images: [
+      {
+        url: "/images/FA2_5340_2_edited.png",
+        width: 1200,
+        height: 630,
+        alt: "Lionel Coevoet - Full Stack Developer",
+      },
+    ],
+  },
+};
 
 export default function HomePage() {
   return (
