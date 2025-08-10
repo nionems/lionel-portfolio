@@ -214,7 +214,7 @@ export default function ProjectManager() {
                   Live URL (optional)
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   name="liveUrl"
                   value={formData.liveUrl}
                   onChange={handleInputChange}
@@ -228,7 +228,7 @@ export default function ProjectManager() {
                   GitHub URL (optional)
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   name="githubUrl"
                   value={formData.githubUrl}
                   onChange={handleInputChange}
@@ -243,7 +243,7 @@ export default function ProjectManager() {
                 Image URL (optional)
               </label>
               <input
-                type="url"
+                type="text"
                 name="imageUrl"
                 value={formData.imageUrl}
                 onChange={handleInputChange}
