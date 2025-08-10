@@ -211,7 +211,7 @@ export default function ProjectManager() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
-                  Live URL
+                  Live URL (optional)
                 </label>
                 <input
                   type="url"
@@ -225,7 +225,7 @@ export default function ProjectManager() {
 
               <div>
                 <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
-                  GitHub URL
+                  GitHub URL (optional)
                 </label>
                 <input
                   type="url"
