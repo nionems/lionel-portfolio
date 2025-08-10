@@ -26,7 +26,7 @@ export default function ResumeButton() {
     return (
       <button 
         disabled
-        className="button-secondary text-center bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 border-green-600 hover:border-green-700 dark:border-green-600 dark:hover:border-green-700 opacity-50 cursor-not-allowed"
+        className="button-secondary text-center bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 border-purple-600 hover:border-purple-700 dark:border-purple-600 dark:hover:border-purple-700 opacity-50 cursor-not-allowed"
       >
         📄 Loading...
       </button>
@@ -50,7 +50,7 @@ export default function ResumeButton() {
       href={resumeUrl} 
       target="_blank" 
       rel="noopener noreferrer" 
-      className="button-secondary text-center bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 border-green-600 hover:border-green-700 dark:border-green-600 dark:hover:border-green-700"
+      className="button-secondary text-center bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 border-purple-600 hover:border-purple-700 dark:border-purple-600 dark:hover:border-purple-700"
     >
       📄 My Resume
     </a>
