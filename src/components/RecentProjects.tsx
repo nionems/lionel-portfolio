@@ -47,8 +47,33 @@ export default function RecentProjects() {
         // Sort by creation date and take the 2 most recent
         const sortedProjects = projectList
           .sort((a, b) => {
-            const dateA = a.createdAt?.toDate?.() || new Date(0);
-            const dateB = b.createdAt?.toDate?.() || new Date(0);
+            // Try to get dates from multiple sources
+            let dateA: Date;
+            let dateB: Date;
+            
+            // For project A
+            if (a.createdAt?.toDate) {
+              dateA = a.createdAt.toDate();
+            } else if (a.createdAt instanceof Date) {
+              dateA = a.createdAt;
+            } else if (a.createdAt) {
+              dateA = new Date(a.createdAt);
+            } else {
+              dateA = new Date(0); // Default to epoch if no date
+            }
+            
+            // For project B
+            if (b.createdAt?.toDate) {
+              dateB = b.createdAt.toDate();
+            } else if (b.createdAt instanceof Date) {
+              dateB = b.createdAt;
+            } else if (b.createdAt) {
+              dateB = new Date(b.createdAt);
+            } else {
+              dateB = new Date(0); // Default to epoch if no date
+            }
+            
+            // Sort by most recent first
             return dateB.getTime() - dateA.getTime();
           })
           .slice(0, 2);

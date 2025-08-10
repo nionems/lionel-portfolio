@@ -65,13 +65,22 @@ export const getProjects = async (): Promise<Project[]> => {
     const querySnapshot = await getDocs(collection(db, 'projects'));
     if (querySnapshot.empty) {
       // If no projects in database, return default projects
+      console.log('No projects in database, returning default projects');
       return projects;
     }
     
-    return querySnapshot.docs.map(doc => ({
+    const projectsFromDB = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     })) as Project[];
+    
+    console.log('Projects fetched from database:', projectsFromDB.map(p => ({
+      name: p.name,
+      createdAt: p.createdAt,
+      projectDate: p.projectDate
+    })));
+    
+    return projectsFromDB;
   } catch (error) {
     console.error('Error fetching projects:', error);
     // Fallback to default projects

@@ -47,12 +47,47 @@ export default function PortfolioGrid() {
         
         // Sort projects by creation date (most recent first)
         const sortedProjects = projectList.sort((a, b) => {
-          const dateA = a.createdAt?.toDate?.() || new Date(0);
-          const dateB = b.createdAt?.toDate?.() || new Date(0);
+          // Try to get dates from multiple sources
+          let dateA: Date;
+          let dateB: Date;
+          
+          // For project A
+          if (a.createdAt?.toDate) {
+            dateA = a.createdAt.toDate();
+          } else if (a.createdAt instanceof Date) {
+            dateA = a.createdAt;
+          } else if (a.createdAt) {
+            dateA = new Date(a.createdAt);
+          } else {
+            dateA = new Date(0); // Default to epoch if no date
+          }
+          
+          // For project B
+          if (b.createdAt?.toDate) {
+            dateB = b.createdAt.toDate();
+          } else if (b.createdAt instanceof Date) {
+            dateB = b.createdAt;
+          } else if (b.createdAt) {
+            dateB = new Date(b.createdAt);
+          } else {
+            dateB = new Date(0); // Default to epoch if no date
+          }
+          
+          // Sort by most recent first
           return dateB.getTime() - dateA.getTime();
         });
         
         setProjects(sortedProjects);
+
+        // Debug: Log project data to see what fields are available
+        console.log('Projects loaded:', sortedProjects.map(p => ({
+          name: p.name,
+          projectDate: p.projectDate,
+          createdAt: p.createdAt,
+          createdAtType: typeof p.createdAt,
+          hasToDate: !!p.createdAt?.toDate
+        })));
+        console.log('Projects sorted by creation date (most recent first)');
 
         // Load media for each project
         const mediaMap: Record<string, MediaItem[]> = {};
@@ -159,7 +194,26 @@ export default function PortfolioGrid() {
                   <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100">{project.name}</h3>
                   {project.projectDate && (
                     <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
-                      {new Date(project.projectDate).toLocaleDateString()}
+                      {(() => {
+                        try {
+                          return new Date(project.projectDate).toLocaleDateString();
+                        } catch (error) {
+                          console.error('Error formatting project date:', error);
+                          return 'Date';
+                        }
+                      })()}
+                    </span>
+                  )}
+                  {project.createdAt && !project.projectDate && (
+                    <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                      {(() => {
+                        try {
+                          return project.createdAt.toDate ? project.createdAt.toDate().toLocaleDateString() : 'Recent';
+                        } catch (error) {
+                          console.error('Error formatting created date:', error);
+                          return 'Recent';
+                        }
+                      })()}
                     </span>
                   )}
                 </div>
