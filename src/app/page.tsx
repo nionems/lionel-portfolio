@@ -36,6 +36,14 @@ export default function HomePage() {
               <Link href="/contact" className="button-secondary text-center">
                 Get In Touch
               </Link>
+              <a 
+                href="/resume.pdf" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="button-secondary text-center bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 border-green-600 hover:border-green-700 dark:border-green-600 dark:hover:border-green-700"
+              >
+                📄 My Resume
+              </a>
             </div>
           </div>
         </div>
