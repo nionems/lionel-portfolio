@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { createCaseStudy, defaultCaseStudies } from '@/lib/caseStudyService';
 
 export default function AdminSetup() {
   const [email, setEmail] = useState('admin@lionelportfolio.com');
@@ -11,6 +12,8 @@ export default function AdminSetup() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isPopulatingCaseStudies, setIsPopulatingCaseStudies] = useState(false);
+  const [caseStudiesStatus, setCaseStudiesStatus] = useState('');
   const router = useRouter();
 
   const handleCreateAdmin = async (e: React.FormEvent) => {
@@ -33,6 +36,33 @@ export default function AdminSetup() {
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handlePopulateCaseStudies = async () => {
+    setIsPopulatingCaseStudies(true);
+    setCaseStudiesStatus('');
+
+    try {
+      let createdCount = 0;
+      for (const caseStudy of defaultCaseStudies) {
+        try {
+          await createCaseStudy(caseStudy);
+          createdCount++;
+        } catch (error) {
+          console.error('Error creating case study:', error);
+        }
+      }
+      
+      if (createdCount > 0) {
+        setCaseStudiesStatus(`Successfully created ${createdCount} case studies!`);
+      } else {
+        setCaseStudiesStatus('No case studies were created. They may already exist.');
+      }
+    } catch (error) {
+      setCaseStudiesStatus('Error populating case studies. Please try again.');
+    } finally {
+      setIsPopulatingCaseStudies(false);
     }
   };
 
@@ -95,13 +125,36 @@ export default function AdminSetup() {
             </button>
           </form>
           
-          <div className="mt-6 text-center">
-            <a 
-              href="/admin/login" 
-              className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300"
+          <div className="mt-6 space-y-4">
+            <button
+              type="button"
+              onClick={handlePopulateCaseStudies}
+              disabled={isPopulatingCaseStudies}
+              className="w-full button-secondary disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Already have an account? Login here
-            </a>
+              {isPopulatingCaseStudies ? 'Populating...' : 'Populate Default Case Studies'}
+            </button>
+            
+            {caseStudiesStatus && (
+              <div className={`p-3 rounded-lg text-sm ${
+                caseStudiesStatus.includes('Successfully') 
+                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                  : caseStudiesStatus.includes('Error')
+                  ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                  : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+              }`}>
+                {caseStudiesStatus}
+              </div>
+            )}
+            
+            <div className="text-center">
+              <a 
+                href="/admin/login" 
+                className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300"
+              >
+                Already have an account? Login here
+              </a>
+            </div>
           </div>
         </div>
       </div>

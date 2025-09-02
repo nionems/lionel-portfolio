@@ -9,6 +9,7 @@ import { uploadMedia, getMediaItems, deleteMediaItem, updateMediaProject, MediaI
 import { getProjects, Project } from '@/lib/projectService';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import ProjectManager from '@/components/ProjectManager';
+import CaseStudyManager from '@/components/CaseStudyManager';
 import VideoModal from '@/components/VideoModal';
 import VideoThumbnail from '@/components/VideoThumbnail';
 import { storage } from '@/lib/firebase';
@@ -35,7 +36,7 @@ export default function AdminDashboard() {
   });
 
   const [projects, setProjects] = useState<Project[]>([]);
-  const [activeTab, setActiveTab] = useState<'media' | 'projects' | 'resume'>('media');
+  const [activeTab, setActiveTab] = useState<'media' | 'projects' | 'case-studies' | 'resume'>('media');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [currentResume, setCurrentResume] = useState<string | null>(null);
   const [isUploadingResume, setIsUploadingResume] = useState(false);
@@ -315,6 +316,16 @@ export default function AdminDashboard() {
             }`}
           >
             Project Management
+          </button>
+          <button
+            onClick={() => setActiveTab('case-studies')}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              activeTab === 'case-studies'
+                ? 'bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 shadow-sm'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100'
+            }`}
+          >
+            Case Studies
           </button>
           <button
             onClick={() => setActiveTab('resume')}
@@ -629,6 +640,12 @@ export default function AdminDashboard() {
 
         {activeTab === 'projects' && (
           <ProjectManager />
+        )}
+
+        {activeTab === 'case-studies' && (
+          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-purple-100 dark:border-purple-800">
+            <CaseStudyManager />
+          </div>
         )}
 
         {activeTab === 'resume' && (
