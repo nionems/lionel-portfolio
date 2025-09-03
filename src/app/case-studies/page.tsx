@@ -1,4 +1,7 @@
+'use client';
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { getCaseStudies } from "@/lib/caseStudyService";
 import { getMediaItems, MediaItem } from "@/lib/mediaService";
 import VideoThumbnail from "@/components/VideoThumbnail";
@@ -46,26 +49,52 @@ const staticCaseStudies = [
   }
 ];
 
-export default async function CaseStudiesPage() {
-  let caseStudies = staticCaseStudies;
-  let mediaItems: MediaItem[] = [];
-  
-  try {
-    // Try to fetch dynamic data, fallback to static data if Firebase is unavailable
-    const [dynamicCaseStudies, dynamicMediaItems] = await Promise.all([
-      getCaseStudies().catch(() => staticCaseStudies),
-      getMediaItems().catch(() => [])
-    ]);
-    
-    caseStudies = dynamicCaseStudies as typeof staticCaseStudies;
-    mediaItems = dynamicMediaItems;
-  } catch (error) {
-    console.log('Using static case studies data for build time');
-    // Continue with static data
-  }
+export default function CaseStudiesPage() {
+  const [caseStudies, setCaseStudies] = useState(staticCaseStudies);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Only fetch Firebase data at runtime, not during build
+        const [dynamicCaseStudies, dynamicMediaItems] = await Promise.all([
+          getCaseStudies().catch(() => staticCaseStudies),
+          getMediaItems().catch(() => [])
+        ]);
+        
+        setCaseStudies(dynamicCaseStudies as typeof staticCaseStudies);
+        setMediaItems(dynamicMediaItems);
+      } catch (error) {
+        console.log('Using static case studies data');
+        // Continue with static data
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
   
   // Create a map of media items by ID for quick lookup
   const mediaMap = new Map(mediaItems.map(item => [item.id, item]));
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8 md:space-y-12">
+        <section className="text-center space-y-4 md:space-y-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">Case Studies</h1>
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
+            Deep dive into my most impactful projects. Learn about the challenges, solutions, and outcomes.
+          </p>
+        </section>
+        <div className="text-center py-12">
+          <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading case studies...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 md:space-y-12">
