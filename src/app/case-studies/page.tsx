@@ -57,7 +57,7 @@ export default async function CaseStudiesPage() {
       getMediaItems().catch(() => [])
     ]);
     
-    caseStudies = dynamicCaseStudies;
+    caseStudies = dynamicCaseStudies as typeof staticCaseStudies;
     mediaItems = dynamicMediaItems;
   } catch (error) {
     console.log('Using static case studies data for build time');
