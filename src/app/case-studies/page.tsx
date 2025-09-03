@@ -1,12 +1,68 @@
 import Link from "next/link";
 import { getCaseStudies } from "@/lib/caseStudyService";
-import { getMediaItems } from "@/lib/mediaService";
+import { getMediaItems, MediaItem } from "@/lib/mediaService";
 import VideoThumbnail from "@/components/VideoThumbnail";
 
+// Static case studies for build time
+const staticCaseStudies = [
+  {
+    id: 'static-1',
+    title: "ISP Website Redesign",
+    subtitle: "Ripple Networks ISP",
+    role: "Project Manager & Multimedia Specialist",
+    description: "I led the full digital transformation of Ripple Networks, an Australian ISP, turning an outdated website into a competitive, sales-ready brand.",
+    challenge: "Outdated site, no brand identity or SEO. No reviews/testimonials, weak lead generation. Low visibility vs. competitors like Aussie Broadband & Leaptel.",
+    solution: "Managed a 3-person team (designer, marketer, developer) using Agile/Kanban. Created Ripple's 🧊 Yeti mascot + AI-driven videos & animations. Redesigned site: FAQs, testimonials, business plans, modem upsells, 3-step signup flow. Planned SEO/content strategy + sales funnels to improve visibility and conversions. Integrated Google Reviews and trust signals.",
+    result: "Boosted visibility with SEO + optimized content. Higher conversions with CTAs, funnels, and modem upsells. Built brand personality through animated mascot. Positioned Ripple as a marketing-ready, competitive ISP. This project showcases my ability to lead teams, build brand identity, and align digital strategy with sales — combining project management with creative multimedia execution.",
+    technologies: ["React", "Node.js", "MongoDB", "AWS"],
+    featuredMediaId: undefined,
+    projectDate: "2024-01-15"
+  },
+  {
+    id: 'static-2',
+    title: "AI-Powered Task Management",
+    subtitle: "CS2",
+    role: "Full-Stack Developer",
+    description: "Built an intelligent task management system that uses AI to prioritize tasks, suggest optimal workflows, and automate routine processes.",
+    challenge: "Manual task prioritization, inefficient workflows",
+    solution: "ML-powered prioritization, automated workflows",
+    result: "50% time savings, 30% productivity increase",
+    technologies: ["Next.js", "TypeScript", "TensorFlow", "PostgreSQL"],
+    featuredMediaId: undefined,
+    projectDate: "2024-02-20"
+  },
+  {
+    id: 'static-3',
+    title: "Real-Time Analytics Dashboard",
+    subtitle: "CS3",
+    role: "Backend Developer",
+    description: "Developed a comprehensive analytics platform that processes millions of data points in real-time and provides actionable insights through interactive visualizations.",
+    challenge: "Large data volumes, real-time processing needs",
+    solution: "Stream processing, optimized queries, caching",
+    result: "Sub-second query times, 99.9% uptime",
+    technologies: ["Vue.js", "D3.js", "Kafka", "Redis"],
+    featuredMediaId: undefined,
+    projectDate: "2024-03-10"
+  }
+];
+
 export default async function CaseStudiesPage() {
-  // Fetch case studies and media items
-  const caseStudies = await getCaseStudies();
-  const mediaItems = await getMediaItems();
+  let caseStudies = staticCaseStudies;
+  let mediaItems: MediaItem[] = [];
+  
+  try {
+    // Try to fetch dynamic data, fallback to static data if Firebase is unavailable
+    const [dynamicCaseStudies, dynamicMediaItems] = await Promise.all([
+      getCaseStudies().catch(() => staticCaseStudies),
+      getMediaItems().catch(() => [])
+    ]);
+    
+    caseStudies = dynamicCaseStudies;
+    mediaItems = dynamicMediaItems;
+  } catch (error) {
+    console.log('Using static case studies data for build time');
+    // Continue with static data
+  }
   
   // Create a map of media items by ID for quick lookup
   const mediaMap = new Map(mediaItems.map(item => [item.id, item]));
@@ -91,7 +147,7 @@ export default async function CaseStudiesPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
-                  {caseStudy.technologies.map((tech, techIndex) => (
+                  {caseStudy.technologies.map((tech: string, techIndex: number) => (
                     <span 
                       key={techIndex} 
                       className="bg-gray-100 text-gray-800 px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium"
