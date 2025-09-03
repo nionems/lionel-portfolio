@@ -1,6 +1,6 @@
 import { db } from './firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, deleteDoc, doc, updateDoc, Timestamp, FieldValue } from 'firebase/firestore';
 
 const storage = getStorage();
 
@@ -13,8 +13,8 @@ export interface MediaItem {
   thumbnail?: string;
   projectId?: string; // Assign to specific project
   projectName?: string; // Project name for display
-  createdAt?: any;
-  updatedAt?: any;
+  createdAt?: Timestamp | FieldValue;
+  updatedAt?: Timestamp | FieldValue;
 }
 
 export const uploadMedia = async (file: File, title: string, description: string, projectId?: string, projectName?: string): Promise<MediaItem> => {

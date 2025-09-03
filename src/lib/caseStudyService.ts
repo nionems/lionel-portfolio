@@ -90,7 +90,7 @@ export const createCaseStudy = async (caseStudyData: Omit<CaseStudy, 'id' | 'cre
     
     // Filter out undefined values before sending to Firestore
     const cleanData = Object.fromEntries(
-      Object.entries(caseStudyData).filter(([_, value]) => value !== undefined)
+      Object.entries(caseStudyData).filter(([, value]) => value !== undefined)
     );
     
     console.log('Clean data for Firestore:', cleanData);
@@ -116,7 +116,7 @@ export const updateCaseStudy = async (id: string, caseStudyData: Partial<CaseStu
     
     // Filter out undefined values before sending to Firestore
     const cleanData = Object.fromEntries(
-      Object.entries(caseStudyData).filter(([_, value]) => value !== undefined)
+      Object.entries(caseStudyData).filter(([, value]) => value !== undefined)
     );
     
     console.log('Clean update data for Firestore:', cleanData);

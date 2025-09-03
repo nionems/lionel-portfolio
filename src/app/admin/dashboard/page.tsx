@@ -541,7 +541,7 @@ export default function AdminDashboard() {
                                 {item.description}
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                Type: {item.type} • {item.createdAt?.toDate?.()?.toLocaleDateString() || 'Unknown date'}
+                                Type: {item.type} • {item.createdAt && typeof item.createdAt === 'object' && 'toDate' in item.createdAt ? item.createdAt.toDate().toLocaleDateString() : 'Unknown date'}
                                 {item.projectName && (
                                   <span className="ml-2 text-purple-600 dark:text-purple-400">
                                     • Project: {item.projectName}

@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, addDoc, getDocs, updateDoc, doc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, doc, serverTimestamp, getDoc, Timestamp, FieldValue } from 'firebase/firestore';
 
 export interface Project {
   id?: string;
@@ -11,8 +11,8 @@ export interface Project {
   liveUrl?: string;
   githubUrl?: string;
   projectDate?: string; // Date when the project was completed/launched
-  createdAt?: any;
-  updatedAt?: any;
+  createdAt?: Timestamp | FieldValue;
+  updatedAt?: Timestamp | FieldValue;
 }
 
 export const projects: Project[] = [

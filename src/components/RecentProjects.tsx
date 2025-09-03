@@ -54,11 +54,11 @@ export default function RecentProjects() {
             // For project A - use projectDate (the date you entered)
             if (a.projectDate) {
               dateA = new Date(a.projectDate);
-            } else if (a.createdAt?.toDate) {
+            } else if (a.createdAt && typeof a.createdAt === 'object' && 'toDate' in a.createdAt && typeof a.createdAt.toDate === 'function') {
               dateA = a.createdAt.toDate();
             } else if (a.createdAt instanceof Date) {
               dateA = a.createdAt;
-            } else if (a.createdAt) {
+            } else if (a.createdAt && (typeof a.createdAt === 'string' || typeof a.createdAt === 'number')) {
               dateA = new Date(a.createdAt);
             } else {
               dateA = new Date(0); // Default to epoch if no date
@@ -67,11 +67,11 @@ export default function RecentProjects() {
             // For project B - use projectDate (the date you entered)
             if (b.projectDate) {
               dateB = new Date(b.projectDate);
-            } else if (b.createdAt?.toDate) {
+            } else if (b.createdAt && typeof b.createdAt === 'object' && 'toDate' in b.createdAt && typeof b.createdAt.toDate === 'function') {
               dateB = b.createdAt.toDate();
             } else if (b.createdAt instanceof Date) {
               dateB = b.createdAt;
-            } else if (b.createdAt) {
+            } else if (b.createdAt && (typeof b.createdAt === 'string' || typeof b.createdAt === 'number')) {
               dateB = new Date(b.createdAt);
             } else {
               dateB = new Date(0); // Default to epoch if no date

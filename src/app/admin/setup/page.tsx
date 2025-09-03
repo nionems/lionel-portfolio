@@ -28,11 +28,13 @@ export default function AdminSetup() {
       setTimeout(() => {
         router.push('/admin/login');
       }, 2000);
-    } catch (error: any) {
-      if (error.code === 'auth/email-already-in-use') {
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'auth/email-already-in-use') {
         setError('Admin user already exists. You can login with these credentials.');
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        setError((error as { message: string }).message || 'Failed to create admin user');
       } else {
-        setError(error.message || 'Failed to create admin user');
+        setError('Failed to create admin user');
       }
     } finally {
       setIsLoading(false);

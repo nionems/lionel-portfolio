@@ -2,28 +2,6 @@ import Link from "next/link";
 import { getCaseStudies } from "@/lib/caseStudyService";
 import { getMediaItems } from "@/lib/mediaService";
 import VideoThumbnail from "@/components/VideoThumbnail";
-import VideoModal from "@/components/VideoModal";
-
-interface CaseStudy {
-  id: string;
-  title: string;
-  subtitle: string;
-  role: string;
-  description: string;
-  challenge: string;
-  solution: string;
-  result: string;
-  technologies: string[];
-  featuredMediaId?: string;
-  projectDate: string;
-}
-
-interface MediaItem {
-  id: string;
-  title: string;
-  url: string;
-  type: 'image' | 'video';
-}
 
 export default async function CaseStudiesPage() {
   // Fetch case studies and media items
@@ -146,13 +124,17 @@ export default async function CaseStudiesPage() {
               <span className="text-gray-400 text-2xl">📋</span>
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">No Case Studies Yet</h3>
-            <p className="text-gray-600">Case studies will appear here once they're added through the admin dashboard.</p>
+            <p className="text-gray-600">Case studies will appear here once they&apos;re added through the admin dashboard.</p>
           </div>
         )}
       </section>
     </div>
   );
 }
+
+
+
+
 
 
 

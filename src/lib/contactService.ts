@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 
 export interface ContactMessage {
   firstName: string;
@@ -7,7 +7,7 @@ export interface ContactMessage {
   email: string;
   subject: string;
   message: string;
-  createdAt?: any;
+  createdAt?: Timestamp;
 }
 
 export const submitContactForm = async (message: ContactMessage) => {

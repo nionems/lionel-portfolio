@@ -8,11 +8,11 @@ import {
   getCaseStudies,
   type CaseStudy 
 } from '../lib/caseStudyService';
-import { getMediaItems } from '../lib/mediaService';
+import { getMediaItems, MediaItem } from '../lib/mediaService';
 
 export default function CaseStudyManager() {
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
-  const [mediaItems, setMediaItems] = useState<any[]>([]);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingCaseStudy, setEditingCaseStudy] = useState<CaseStudy | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
