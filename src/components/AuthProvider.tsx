@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
@@ -19,12 +18,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
+    let unsubscribe: (() => void) | undefined;
 
-    return () => unsubscribe();
+    // Only initialize Firebase on the client side
+    const initAuth = async () => {
+      try {
+        const { auth } = await import('@/lib/firebase');
+        unsubscribe = onAuthStateChanged(auth, (user) => {
+          setUser(user);
+          setLoading(false);
+        });
+      } catch (error) {
+        console.log('Firebase not available, using static auth state');
+        setLoading(false);
+      }
+    };
+
+    initAuth();
+
+    return () => {
+      // Cleanup if needed
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   return (
