@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { createCaseStudy, defaultCaseStudies } from '@/lib/caseStudyService';
 
@@ -23,6 +21,8 @@ export default function AdminSetup() {
     setSuccess('');
 
     try {
+      const { createUserWithEmailAndPassword } = await import('firebase/auth');
+      const { auth } = await import('@/lib/firebase');
       await createUserWithEmailAndPassword(auth, email, password);
       setSuccess('Admin user created successfully! You can now login.');
       setTimeout(() => {

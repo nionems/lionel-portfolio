@@ -5,8 +5,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { useRouter } from 'next/navigation';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { uploadMedia, getMediaItems, deleteMediaItem, updateMediaProject, MediaItem } from '@/lib/mediaService';
 import { getProjects, Project } from '@/lib/projectService';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -14,8 +12,6 @@ import ProjectManager from '@/components/ProjectManager';
 import CaseStudyManager from '@/components/CaseStudyManager';
 import VideoModal from '@/components/VideoModal';
 import VideoThumbnail from '@/components/VideoThumbnail';
-import { storage } from '@/lib/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
@@ -73,6 +69,8 @@ export default function AdminDashboard() {
   const loadCurrentResume = async () => {
     try {
       // Check if there's a resume in Firebase Storage
+      const { storage } = await import('@/lib/firebase');
+      const { ref, getDownloadURL } = await import('firebase/storage');
       const resumeRef = ref(storage, 'resume/resume.pdf');
       const url = await getDownloadURL(resumeRef);
       setCurrentResume(url);
@@ -110,6 +108,8 @@ export default function AdminDashboard() {
 
     try {
       // Upload resume to Firebase Storage
+      const { storage } = await import('@/lib/firebase');
+      const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
       const resumeRef = ref(storage, 'resume/resume.pdf');
       await uploadBytes(resumeRef, resumeFile);
       
@@ -251,6 +251,8 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     try {
+      const { signOut } = await import('firebase/auth');
+      const { auth } = await import('@/lib/firebase');
       await signOut(auth);
       router.push('/admin/login');
     } catch (error) {
