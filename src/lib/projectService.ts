@@ -1,5 +1,4 @@
-import { db } from './firebase';
-import { collection, addDoc, getDocs, updateDoc, doc, serverTimestamp, getDoc, Timestamp, FieldValue } from 'firebase/firestore';
+import { Timestamp, FieldValue } from 'firebase/firestore';
 
 export interface Project {
   id?: string;
@@ -62,6 +61,9 @@ export const projects: Project[] = [
 
 export const getProjects = async (): Promise<Project[]> => {
   try {
+    const { db } = await import('./firebase');
+    const { collection, getDocs } = await import('firebase/firestore');
+    
     const querySnapshot = await getDocs(collection(db, 'projects'));
     if (querySnapshot.empty) {
       // If no projects in database, return default projects
@@ -90,6 +92,9 @@ export const getProjects = async (): Promise<Project[]> => {
 
 export const createProject = async (project: Omit<Project, 'id'>): Promise<Project> => {
   try {
+    const { db } = await import('./firebase');
+    const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+    
     const docRef = await addDoc(collection(db, 'projects'), {
       ...project,
       createdAt: serverTimestamp(),
@@ -111,6 +116,9 @@ export const updateProject = async (id: string, updates: Partial<Project>): Prom
     if (!id) {
       throw new Error('Project ID is required for update');
     }
+    
+    const { db } = await import('./firebase');
+    const { updateDoc, doc, serverTimestamp, getDoc } = await import('firebase/firestore');
     
     console.log('Updating project with ID:', id, 'Updates:', updates);
     

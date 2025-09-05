@@ -1,15 +1,4 @@
-import { 
-  collection, 
-  addDoc, 
-  getDocs, 
-  doc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  orderBy,
-  Timestamp 
-} from 'firebase/firestore';
-import { db } from './firebase';
+import { Timestamp } from 'firebase/firestore';
 
 export interface CaseStudy {
   id?: string;
@@ -67,6 +56,9 @@ export const defaultCaseStudies: Omit<CaseStudy, 'id' | 'createdAt' | 'updatedAt
 // Get all case studies
 export const getCaseStudies = async (): Promise<CaseStudy[]> => {
   try {
+    const { db } = await import('./firebase');
+    const { collection, getDocs, query, orderBy } = await import('firebase/firestore');
+    
     const q = query(collection(db, 'caseStudies'), orderBy('projectDate', 'desc'));
     const querySnapshot = await getDocs(q);
     const caseStudies: CaseStudy[] = [];
@@ -86,6 +78,10 @@ export const getCaseStudies = async (): Promise<CaseStudy[]> => {
 // Create a new case study
 export const createCaseStudy = async (caseStudyData: Omit<CaseStudy, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
   try {
+    const { db } = await import('./firebase');
+    const { collection, addDoc } = await import('firebase/firestore');
+    const { Timestamp } = await import('firebase/firestore');
+    
     const now = Timestamp.now();
     
     // Filter out undefined values before sending to Firestore
@@ -112,6 +108,10 @@ export const createCaseStudy = async (caseStudyData: Omit<CaseStudy, 'id' | 'cre
 // Update an existing case study
 export const updateCaseStudy = async (id: string, caseStudyData: Partial<CaseStudy>): Promise<void> => {
   try {
+    const { db } = await import('./firebase');
+    const { doc, updateDoc } = await import('firebase/firestore');
+    const { Timestamp } = await import('firebase/firestore');
+    
     const caseStudyRef = doc(db, 'caseStudies', id);
     
     // Filter out undefined values before sending to Firestore
@@ -136,6 +136,9 @@ export const updateCaseStudy = async (id: string, caseStudyData: Partial<CaseStu
 // Delete a case study
 export const deleteCaseStudy = async (id: string): Promise<void> => {
   try {
+    const { db } = await import('./firebase');
+    const { deleteDoc, doc } = await import('firebase/firestore');
+    
     await deleteDoc(doc(db, 'caseStudies', id));
     console.log('Case study deleted:', id);
   } catch (error) {

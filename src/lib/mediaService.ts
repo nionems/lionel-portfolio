@@ -1,8 +1,4 @@
-import { db } from './firebase';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp, getDocs, deleteDoc, doc, updateDoc, Timestamp, FieldValue } from 'firebase/firestore';
-
-const storage = getStorage();
+import { Timestamp, FieldValue } from 'firebase/firestore';
 
 export interface MediaItem {
   id?: string;
@@ -19,6 +15,13 @@ export interface MediaItem {
 
 export const uploadMedia = async (file: File, title: string, description: string, projectId?: string, projectName?: string): Promise<MediaItem> => {
   try {
+    // Dynamic imports to avoid build-time Firebase initialization
+    const { db } = await import('./firebase');
+    const { getStorage, ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+    const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+    
+    const storage = getStorage();
+    
     // Create a unique filename
     const timestamp = Date.now();
     const fileName = `${timestamp}_${file.name}`;
@@ -58,6 +61,9 @@ export const uploadMedia = async (file: File, title: string, description: string
 
 export const getMediaItems = async (): Promise<MediaItem[]> => {
   try {
+    const { db } = await import('./firebase');
+    const { collection, getDocs } = await import('firebase/firestore');
+    
     const querySnapshot = await getDocs(collection(db, 'media'));
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
@@ -71,6 +77,9 @@ export const getMediaItems = async (): Promise<MediaItem[]> => {
 
 export const getMediaByProject = async (projectId: string): Promise<MediaItem[]> => {
   try {
+    const { db } = await import('./firebase');
+    const { collection, getDocs } = await import('firebase/firestore');
+    
     const querySnapshot = await getDocs(collection(db, 'media'));
     const allMedia = querySnapshot.docs.map(doc => ({
       id: doc.id,
@@ -86,6 +95,9 @@ export const getMediaByProject = async (projectId: string): Promise<MediaItem[]>
 
 export const deleteMediaItem = async (id: string): Promise<void> => {
   try {
+    const { db } = await import('./firebase');
+    const { deleteDoc, doc } = await import('firebase/firestore');
+    
     await deleteDoc(doc(db, 'media', id));
   } catch (error) {
     console.error('Error deleting media:', error);
@@ -95,6 +107,9 @@ export const deleteMediaItem = async (id: string): Promise<void> => {
 
 export const updateMediaProject = async (id: string, projectId: string, projectName: string): Promise<void> => {
   try {
+    const { db } = await import('./firebase');
+    const { updateDoc, doc, serverTimestamp } = await import('firebase/firestore');
+    
     await updateDoc(doc(db, 'media', id), {
       projectId: projectId || null,
       projectName: projectName || null,
