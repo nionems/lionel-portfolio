@@ -1,5 +1,4 @@
-import { db } from './firebase';
-import { collection, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 
 export interface ContactMessage {
   firstName: string;
@@ -12,6 +11,9 @@ export interface ContactMessage {
 
 export const submitContactForm = async (message: ContactMessage) => {
   try {
+    const { db } = await import('./firebase');
+    const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+    
     const docRef = await addDoc(collection(db, 'contactMessages'), {
       ...message,
       createdAt: serverTimestamp(),

@@ -36,7 +36,7 @@ export default function ContactForm() {
       const result = await submitContactForm(formData as ContactMessage);
       
       if (result.success) {
-        trackContactFormSubmission();
+        await trackContactFormSubmission();
         setSubmitStatus({
           type: 'success',
           message: 'Thank you! Your message has been sent successfully.',
