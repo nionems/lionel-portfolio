@@ -2,9 +2,19 @@
 
 import { useState, useEffect } from 'react';
 
+interface EnvVars {
+  apiKey?: string;
+  authDomain?: string;
+  projectId?: string;
+  storageBucket?: string;
+  messagingSenderId?: string;
+  appId?: string;
+  measurementId?: string;
+}
+
 export default function TestFirebase() {
   const [status, setStatus] = useState('Testing Firebase connection...');
-  const [envVars, setEnvVars] = useState<any>({});
+  const [envVars, setEnvVars] = useState<EnvVars>({});
 
   useEffect(() => {
     const testFirebase = async () => {
