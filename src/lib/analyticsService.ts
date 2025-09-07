@@ -1,7 +1,13 @@
 export const trackPageView = async (pageName: string) => {
   try {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
     const { analytics } = await import('./firebase');
     const { logEvent } = await import('firebase/analytics');
+    
+    // Add a small delay to ensure analytics is ready
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     if (analytics) {
       logEvent(analytics, 'page_view', {
@@ -16,8 +22,14 @@ export const trackPageView = async (pageName: string) => {
 
 export const trackContactFormSubmission = async () => {
   try {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
     const { analytics } = await import('./firebase');
     const { logEvent } = await import('firebase/analytics');
+    
+    // Add a small delay to ensure analytics is ready
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     if (analytics) {
       logEvent(analytics, 'contact_form_submission', {
@@ -31,8 +43,14 @@ export const trackContactFormSubmission = async () => {
 
 export const trackSocialLinkClick = async (platform: string) => {
   try {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
     const { analytics } = await import('./firebase');
     const { logEvent } = await import('firebase/analytics');
+    
+    // Add a small delay to ensure analytics is ready
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     if (analytics) {
       logEvent(analytics, 'social_link_click', {
@@ -47,8 +65,14 @@ export const trackSocialLinkClick = async (platform: string) => {
 
 export const trackThemeToggle = async (theme: 'light' | 'dark') => {
   try {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
     const { analytics } = await import('./firebase');
     const { logEvent } = await import('firebase/analytics');
+    
+    // Add a small delay to ensure analytics is ready
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     if (analytics) {
       logEvent(analytics, 'theme_toggle', {
