@@ -6,8 +6,8 @@ import ProfileImage from "@/components/ProfileImage";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Lionel Coevoet - Full Stack Developer Portfolio",
-  description: "Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Specializing in mobile app development and innovative technology solutions.",
+  title: "Lionel Coevoet - Full Stack Developer & Mobile App Developer | Sydney, Australia",
+  description: "Lionel Coevoet is a Full Stack Developer with 4+ years of experience specializing in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Based in Sydney, Australia. Available for freelance projects and full-time opportunities.",
   keywords: [
     "Lionel Coevoet",
     "Full Stack Developer",
@@ -16,11 +16,23 @@ export const metadata: Metadata = {
     "Mobile App Developer",
     "Sydney Developer",
     "Australian Developer",
-    "Portfolio"
+    "Portfolio",
+    "Freelance Developer",
+    "Software Engineer",
+    "Web Development",
+    "Mobile Development",
+    "JavaScript Developer",
+    "TypeScript Developer",
+    "Node.js Developer",
+    "Python Developer",
+    "Java Developer",
+    "Firebase Developer",
+    "MongoDB Developer",
+    "AWS Developer"
   ],
   openGraph: {
-    title: "Lionel Coevoet - Full Stack Developer Portfolio",
-    description: "Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS.",
+    title: "Lionel Coevoet - Full Stack Developer & Mobile App Developer",
+    description: "Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Based in Sydney, Australia.",
     type: "website",
     url: "https://lionel-portfolio.vercel.app",
     images: [
@@ -28,24 +40,30 @@ export const metadata: Metadata = {
         url: "/images/FA2_5340_2_edited.png",
         width: 1200,
         height: 630,
-        alt: "Lionel Coevoet - Full Stack Developer",
+        alt: "Lionel Coevoet - Full Stack Developer and Mobile App Developer",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lionel Coevoet - Full Stack Developer & Mobile App Developer",
+    description: "Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Based in Sydney, Australia.",
+    images: ["/images/FA2_5340_2_edited.png"],
   },
 };
 
 export default function HomePage() {
   return (
-    <div className="space-y-0">
+    <main className="space-y-0">
       {/* Hero Section */}
-      <section className="text-center space-y-3 md:space-y-4 py-4 md:py-6">
+      <section className="text-center space-y-3 md:space-y-4 py-4 md:py-6" aria-labelledby="hero-heading">
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-2xl md:rounded-3xl blur-2xl md:blur-3xl"></div>
           <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl md:rounded-3xl p-4 md:p-6 lg:p-8 shadow-xl">
             {/* Profile Image */}
             <ProfileImage />
             
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold gradient-text mb-2 md:mb-3">
+            <h1 id="hero-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold gradient-text mb-2 md:mb-3">
               Hi, I&apos;m Lionel
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-4xl md:max-w-5xl mx-auto leading-relaxed px-4">
@@ -68,7 +86,8 @@ export default function HomePage() {
       </section>
 
       {/* Quick Stats */}
-      <section className="space-y-4 md:space-y-6">
+      <section className="space-y-4 md:space-y-6" aria-labelledby="stats-heading">
+        <h2 id="stats-heading" className="sr-only">Professional Statistics</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm p-4 md:p-6 rounded-lg md:rounded-xl shadow-lg card-hover border border-purple-100 dark:border-purple-800 text-center">
             <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg md:rounded-xl mx-auto mb-2 md:mb-3 flex items-center justify-center">
@@ -102,8 +121,8 @@ export default function HomePage() {
       </section>
 
       {/* Featured Skills */}
-      <section className="space-y-6 md:space-y-8">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center gradient-text px-4 pt-4 md:pt-8">Tech Stack</h2>
+      <section className="space-y-6 md:space-y-8" aria-labelledby="tech-stack-heading">
+        <h2 id="tech-stack-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-center gradient-text px-4 pt-4 md:pt-8">Tech Stack</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
           <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm p-6 md:p-8 rounded-xl md:rounded-2xl shadow-lg card-hover border border-purple-100 dark:border-purple-800">
             <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg md:rounded-xl mb-4 flex items-center justify-center">
@@ -139,15 +158,15 @@ export default function HomePage() {
       </section>
 
       {/* Recent Work Preview */}
-      <section className="space-y-6 md:space-y-8">
+      <section className="space-y-6 md:space-y-8" aria-labelledby="recent-projects-heading">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 pt-4 md:pt-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">Recent Projects</h2>
+          <h2 id="recent-projects-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">Recent Projects</h2>
           <Link href="/portfolio" className="button-secondary text-sm md:text-base py-2 px-4 md:py-3 md:px-6">
             View All Projects
           </Link>
         </div>
         <RecentProjects />
       </section>
-    </div>
+    </main>
   );
 }

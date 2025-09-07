@@ -19,10 +19,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Lionel Coevoet - Full Stack Developer Portfolio",
-    template: "%s | Lionel Coevoet"
+    default: "Lionel Coevoet - Full Stack Developer & Mobile App Developer | Sydney, Australia",
+    template: "%s | Lionel Coevoet - Full Stack Developer"
   },
-  description: "Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Specializing in mobile app development and innovative technology solutions.",
+  description: "Lionel Coevoet is a Full Stack Developer with 4+ years of experience specializing in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Based in Sydney, Australia. Available for freelance projects and full-time opportunities.",
   keywords: [
     "Lionel Coevoet",
     "Full Stack Developer",
@@ -39,11 +39,27 @@ export const metadata: Metadata = {
     "Web Development",
     "Mobile Development",
     "Sydney Developer",
-    "Australian Developer"
+    "Australian Developer",
+    "Freelance Developer",
+    "Software Engineer",
+    "Frontend Developer",
+    "Backend Developer",
+    "JavaScript Developer",
+    "TypeScript Developer",
+    "React Native Developer",
+    "API Development",
+    "Cloud Computing",
+    "Database Design",
+    "UI/UX Development",
+    "Responsive Design",
+    "Progressive Web Apps",
+    "E-commerce Development"
   ],
-  authors: [{ name: "Lionel Coevoet" }],
+  authors: [{ name: "Lionel Coevoet", url: "https://lionel-portfolio.vercel.app" }],
   creator: "Lionel Coevoet",
   publisher: "Lionel Coevoet",
+  category: "Technology",
+  classification: "Portfolio Website",
   formatDetection: {
     email: false,
     address: false,
@@ -52,36 +68,43 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://lionel-portfolio.vercel.app'),
   alternates: {
     canonical: '/',
+    languages: {
+      'en-US': '/',
+    },
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://lionel-portfolio.vercel.app',
-    title: 'Lionel Coevoet - Full Stack Developer Portfolio',
-    description: 'Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Specializing in mobile app development and innovative technology solutions.',
+    title: 'Lionel Coevoet - Full Stack Developer & Mobile App Developer',
+    description: 'Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Based in Sydney, Australia.',
     siteName: 'Lionel Coevoet Portfolio',
     images: [
       {
         url: '/images/FA2_5340_2_edited.png',
         width: 1200,
         height: 630,
-        alt: 'Lionel Coevoet - Full Stack Developer',
+        alt: 'Lionel Coevoet - Full Stack Developer and Mobile App Developer',
+        type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Lionel Coevoet - Full Stack Developer Portfolio',
-    description: 'Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS.',
+    title: 'Lionel Coevoet - Full Stack Developer & Mobile App Developer',
+    description: 'Full Stack Developer with 4+ years of experience in React, Next.js, Node.js, Python, Java, Firebase, MongoDB, and AWS. Based in Sydney, Australia.',
     images: ['/images/FA2_5340_2_edited.png'],
     creator: '@lionelcoevoet',
+    site: '@lionelcoevoet',
   },
   robots: {
     index: true,
     follow: true,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
+      noimageindex: false,
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
@@ -91,6 +114,20 @@ export const metadata: Metadata = {
     google: 'your-google-verification-code',
     yandex: 'your-yandex-verification-code',
     yahoo: 'your-yahoo-verification-code',
+    other: {
+      'msvalidate.01': 'your-bing-verification-code',
+    },
+  },
+  manifest: '/manifest.json',
+  other: {
+    'theme-color': '#8B5CF6',
+    'color-scheme': 'light dark',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'default',
+    'apple-mobile-web-app-title': 'Lionel Coevoet Portfolio',
+    'application-name': 'Lionel Coevoet Portfolio',
+    'msapplication-TileColor': '#8B5CF6',
+    'msapplication-config': '/browserconfig.xml',
   },
 };
 
