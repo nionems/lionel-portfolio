@@ -1,7 +1,8 @@
-'use client';
+d Tablet'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
+import { Tablet } from 'lucide-react';
 
 interface AuthContextType {
   user: User | null;
