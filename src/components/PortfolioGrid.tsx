@@ -119,7 +119,7 @@ export default function PortfolioGrid() {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
         {[...Array(6)].map((_, index) => (
           <div key={index} className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl md:rounded-2xl shadow-lg border border-purple-100 dark:border-purple-800 overflow-hidden animate-pulse">
             <div className="h-32 sm:h-40 md:h-48 bg-gray-200 dark:bg-gray-700"></div>
@@ -139,7 +139,7 @@ export default function PortfolioGrid() {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
         {projects.map((project, index) => {
                   const projectId = project.id || project.name;
         const media = projectMedia[projectId] || [];
@@ -167,8 +167,8 @@ export default function PortfolioGrid() {
           ];
 
           return (
-            <div key={projectId} className={`bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl md:rounded-2xl shadow-lg card-hover border ${borderColors[index % borderColors.length]} overflow-hidden`}>
-              <div className={`h-32 sm:h-40 md:h-48 bg-gradient-to-br ${gradientColors[index % gradientColors.length]} flex items-center justify-center relative overflow-hidden`}>
+            <div key={projectId} className={`bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl md:rounded-2xl shadow-lg card-hover border ${borderColors[index % borderColors.length]} overflow-hidden transition-all duration-300 hover:shadow-xl`}>
+              <div className={`h-32 sm:h-40 md:h-44 lg:h-48 bg-gradient-to-br ${gradientColors[index % gradientColors.length]} flex items-center justify-center relative overflow-hidden`}>
                 {firstMedia ? (
                   firstMedia.type === 'image' ? (
                     <img
@@ -199,9 +199,9 @@ export default function PortfolioGrid() {
                   <span className="text-white text-2xl sm:text-3xl md:text-4xl font-bold">P{index + 1}</span>
                 )}
               </div>
-              <div className="p-4 md:p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100">{project.name}</h3>
+              <div className="p-4 sm:p-5 md:p-6">
+                <div className="flex justify-between items-start mb-2 sm:mb-3">
+                  <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100 leading-tight">{project.name}</h3>
                   {project.projectDate && (
                     <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
                       {(() => {
@@ -246,14 +246,14 @@ export default function PortfolioGrid() {
                     </button>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-4">
+                <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2 mb-3 sm:mb-4">
                   {project.technologies.map((tech, techIndex) => (
-                    <span key={techIndex} className="bg-purple-100 text-purple-800 px-2 py-1 md:px-3 md:py-1 rounded-full text-xs md:text-sm">
+                    <span key={techIndex} className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 sm:px-2.5 sm:py-1 md:px-3 md:py-1 rounded-full text-xs sm:text-xs md:text-sm font-medium">
                       {tech}
                     </span>
                   ))}
                 </div>
-                              <Link href={`/projects/${projectId}`} className="button-secondary text-xs md:text-sm py-2 px-3 md:py-2 md:px-4 inline-block">
+                              <Link href={`/projects/${projectId}`} className="button-secondary text-xs sm:text-sm md:text-sm py-2.5 px-4 sm:py-2.5 sm:px-4 md:py-2 md:px-4 min-h-[44px] flex items-center justify-center">
                 View Details
               </Link>
               </div>

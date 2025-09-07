@@ -88,7 +88,7 @@ export default function HomePage() {
       {/* Quick Stats */}
       <section className="space-y-4 md:space-y-6" aria-labelledby="stats-heading">
         <h2 id="stats-heading" className="sr-only">Professional Statistics</h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-4">
           <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm p-4 md:p-6 rounded-lg md:rounded-xl shadow-lg card-hover border border-purple-100 dark:border-purple-800 text-center">
             <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg md:rounded-xl mx-auto mb-2 md:mb-3 flex items-center justify-center">
               <span className="text-white font-bold text-sm md:text-lg">📊</span>
@@ -123,7 +123,7 @@ export default function HomePage() {
       {/* Featured Skills */}
       <section className="space-y-6 md:space-y-8" aria-labelledby="tech-stack-heading">
         <h2 id="tech-stack-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-center gradient-text px-4 pt-4 md:pt-8">Tech Stack</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
           <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm p-6 md:p-8 rounded-xl md:rounded-2xl shadow-lg card-hover border border-purple-100 dark:border-purple-800">
             <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg md:rounded-xl mb-4 flex items-center justify-center">
               <span className="text-white font-bold text-lg md:text-xl">F</span>

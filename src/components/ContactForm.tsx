@@ -85,8 +85,8 @@ export default function ContactForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 md:space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
           <div>
             <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2 text-sm md:text-base">First Name</label>
             <input 
@@ -95,7 +95,7 @@ export default function ContactForm() {
               value={formData.firstName}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors text-sm md:text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              className="w-full px-3 py-3 sm:py-3 md:px-4 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors text-sm sm:text-base md:text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 min-h-[44px]"
               placeholder="Your first name"
             />
           </div>
@@ -107,7 +107,7 @@ export default function ContactForm() {
               value={formData.lastName}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors text-sm md:text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              className="w-full px-3 py-3 sm:py-3 md:px-4 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors text-sm sm:text-base md:text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 min-h-[44px]"
               placeholder="Your last name"
             />
           </div>
