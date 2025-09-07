@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { submitContactForm, ContactMessage } from '@/lib/contactService';
 import { trackContactFormSubmission } from '@/lib/analyticsService';
 
 export default function ContactForm() {
@@ -33,7 +32,15 @@ export default function ContactForm() {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      const result = await submitContactForm(formData as ContactMessage);
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
       
       if (result.success) {
         await trackContactFormSubmission();

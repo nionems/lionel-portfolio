@@ -1,0 +1,44 @@
+[debug] [2025-09-07T01:42:38.691Z] ----------------------------------------------------------------------
+[debug] [2025-09-07T01:42:38.696Z] Command:       /usr/local/bin/node /usr/local/bin/firebase init functions --project lionel-portfolio-b8f25
+[debug] [2025-09-07T01:42:38.697Z] CLI Version:   11.15.0
+[debug] [2025-09-07T01:42:38.697Z] Platform:      darwin
+[debug] [2025-09-07T01:42:38.697Z] Node Version:  v22.11.0
+[debug] [2025-09-07T01:42:38.698Z] Time:          Sun Sep 07 2025 11:42:38 GMT+1000 (Australian Eastern Standard Time)
+[debug] [2025-09-07T01:42:38.698Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-09-07T01:42:38.709Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-09-07T01:42:38.711Z] > authorizing via signed-in user (9072@ait.nsw.edu.au)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/lionelcoevoet/Desktop/lionel_portfolio_web
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2025-09-07T01:42:38.717Z] Using project from CLI flag: lionel-portfolio-b8f25
+[debug] [2025-09-07T01:42:38.719Z] > refreshing access token with scopes: []
+[debug] [2025-09-07T01:42:38.722Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-09-07T01:42:38.722Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-09-07T01:42:39.088Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-09-07T01:42:39.089Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-09-07T01:42:39.090Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/lionel-portfolio-b8f25 [none]
+[debug] [2025-09-07T01:42:39.375Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/lionel-portfolio-b8f25 401
+[debug] [2025-09-07T01:42:39.376Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/lionel-portfolio-b8f25 {"error":{"code":401,"message":"Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.","status":"UNAUTHENTICATED"}}
+[debug] [2025-09-07T01:42:39.377Z] HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+[debug] [2025-09-07T01:42:39.614Z] FirebaseError: HTTP Error: 401, Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+    at responseToError (/usr/local/lib/node_modules/firebase-tools/lib/responseToError.js:49:12)
+    at RetryOperation._fn (/usr/local/lib/node_modules/firebase-tools/lib/apiv2.js:288:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[error] 
+[error] Error: Failed to get Firebase project lionel-portfolio-b8f25. Please make sure the project exists and your account has permission to access it.
