@@ -5,14 +5,32 @@ export async function POST(request: NextRequest) {
   try {
     const { firstName, lastName, email, subject, message } = await request.json();
 
-    // Create transporter
+    // Validate environment variables
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+      console.error('Missing Gmail environment variables');
+      return NextResponse.json(
+        { success: false, error: 'Email service not configured' },
+        { status: 500 }
+      );
+    }
+
+    // Create transporter with production-ready configuration
     const transporter = nodemailer.createTransport({
       service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD,
       },
+      tls: {
+        rejectUnauthorized: false, // Allow self-signed certificates
+      },
     });
+
+    // Verify transporter configuration
+    await transporter.verify();
 
     // Email to you (notification)
     const notificationMailOptions = {
@@ -48,17 +66,26 @@ export async function POST(request: NextRequest) {
       `,
     };
 
-    // Send both emails
-    await Promise.all([
-      transporter.sendMail(notificationMailOptions),
-      transporter.sendMail(autoReplyOptions),
-    ]);
-
-    return NextResponse.json({ success: true });
+    // Send both emails with proper error handling
+    try {
+      await Promise.all([
+        transporter.sendMail(notificationMailOptions),
+        transporter.sendMail(autoReplyOptions),
+      ]);
+      
+      console.log('Emails sent successfully');
+      return NextResponse.json({ success: true });
+    } catch (emailError) {
+      console.error('Error sending emails:', emailError);
+      return NextResponse.json(
+        { success: false, error: 'Failed to send email' },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error in email API:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to send email' },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }
